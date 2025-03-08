@@ -19,8 +19,7 @@ namespace rm_behavior {
 
 RmBehaviorServer::RmBehaviorServer(const rclcpp::NodeOptions & options)
 : BT::TreeExecutionServer(options, "rm_behavior_server"),
-  tick_count_(0)
-{
+  tick_count_(0) {
   // 声明参数
   this->declare_parameter("use_logger", true);
   
@@ -60,8 +59,7 @@ RmBehaviorServer::RmBehaviorServer(const rclcpp::NodeOptions & options)
   RCLCPP_INFO(this->get_logger(), "RmBehaviorServer initialized successfully");
 }
 
-bool RmBehaviorServer::onGoalReceived(const std::string & tree_name, const std::string & payload)
-{
+bool RmBehaviorServer::onGoalReceived(const std::string & tree_name, const std::string & payload) {
   RCLCPP_INFO(
     this->get_logger(), 
     "Received request to execute behavior tree: %s with payload: %s", 
@@ -71,8 +69,7 @@ bool RmBehaviorServer::onGoalReceived(const std::string & tree_name, const std::
   return true;  // 允许执行行为树
 }
 
-void RmBehaviorServer::onTreeCreated(BT::Tree & tree)
-{
+void RmBehaviorServer::onTreeCreated(BT::Tree & tree) {
   // 重置计数器
   tick_count_ = 0;
   
@@ -97,8 +94,7 @@ void RmBehaviorServer::onTreeCreated(BT::Tree & tree)
   RCLCPP_INFO(this->get_logger(), "Behavior tree created successfully with initialized referee data");
 }
 
-std::optional<BT::NodeStatus> RmBehaviorServer::onLoopAfterTick(BT::NodeStatus status)
-{
+std::optional<BT::NodeStatus> RmBehaviorServer::onLoopAfterTick(BT::NodeStatus status) {
   tick_count_++;
   
   if (tick_count_ % 100 == 0) {
@@ -117,8 +113,7 @@ std::optional<BT::NodeStatus> RmBehaviorServer::onLoopAfterTick(BT::NodeStatus s
 }
 
 std::optional<std::string> RmBehaviorServer::onTreeExecutionCompleted(
-  BT::NodeStatus status, bool was_cancelled)
-{
+  BT::NodeStatus status, bool was_cancelled) {
   if (was_cancelled) {
     RCLCPP_WARN(this->get_logger(), "Behavior tree execution was cancelled");
     return "Tree execution cancelled by client";
@@ -133,8 +128,7 @@ std::optional<std::string> RmBehaviorServer::onTreeExecutionCompleted(
   }
 }
 
-void RmBehaviorServer::publishGoalPose(const geometry_msgs::msg::PoseStamped & pose)
-{
+void RmBehaviorServer::publishGoalPose(const geometry_msgs::msg::PoseStamped & pose) {
   goal_pose_pub_->publish(pose);
   RCLCPP_INFO(
     this->get_logger(), 
@@ -145,17 +139,29 @@ void RmBehaviorServer::publishGoalPose(const geometry_msgs::msg::PoseStamped & p
 }  // namespace rm_behavior
 
 // 直接在源文件中实现主函数，无需额外的 main.cpp
-int main(int argc, char * argv[])
-{
-  rclcpp::init(argc, argv);
-  
-  rclcpp::NodeOptions options;
-  auto server = std::make_shared<rm_behavior::RmBehaviorServer>(options);
+int main(int argc, char * argv[]) {
+    rclcpp::init(argc, argv);
 
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(server);
-  executor.spin();
+    rclcpp::NodeOptions options;
+    auto action_server = std::make_shared<rm_behavior::RmBehaviorServer>(options);
 
-  rclcpp::shutdown();
-  return 0;
+    RCLCPP_INFO(action_server->node()->get_logger(), "Starting RmBehaviorServer");
+
+    rclcpp::executors::MultiThreadedExecutor exec(
+        rclcpp::ExecutorOptions(), 0, false, std::chrono::milliseconds(250));
+    exec.add_node(action_server->node());
+    exec.spin();
+    exec.remove_node(action_server->node());
+
+    // Groot2 editor requires a model of your registered Nodes.
+    // You don't need to write that by hand, it can be automatically
+    // generated using the following command.
+    std::string xml_models = BT::writeTreeNodesModelXML(action_server->factory());
+
+    // Save the XML models to a file
+    std::ofstream file(std::filesystem::path(ROOT_DIR) / "behavior_trees" / "models.xml");
+    file << xml_models;
+
+    rclcpp::shutdown();
+    return 0;
 }
