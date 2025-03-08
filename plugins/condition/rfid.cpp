@@ -11,3 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+#include "rm_behavior/plugins/condition/rfid.hpp"
+
+namespace rm_behavior{
+
+statusCheckCondition::statusCheckCondition(const std::string &name, const BT::NodeConfig &config)
+: BT::ConditionNode(name, config){}
+
+
+}
