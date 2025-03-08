@@ -24,22 +24,20 @@
 
 namespace rm_behavior {
 
-class HPCheck : public BT::ConditionNode {
+class HPCheck : public BT::SimpleConditionNode {
+  
 public:
-  HPCheck(const std::string &name, const BT::NodeConfiguration &config);
+
+  HPCheck(const std::string &name, const BT::NodeConfig &config);
 
   static BT::PortsList providedPorts();
 
-  BT::NodeStatus tick() override;
-
 private:
-  rclcpp::Node::SharedPtr node_;
-  rclcpp::Subscription<auto_aim_interfaces::msg::Referee>::SharedPtr
-      subscription_;
-  uint8_t last_base_hp_;
-  uint16_t last_outpost_hp_;
 
-  void refereeCallback(const auto_aim_interfaces::msg::Referee::SharedPtr msg);
+  BT::NodeStatus hpCheck();
+
+  rclcpp::Logger logger_=rclcpp::get_logger("hpCheck");
+
 };
 
 } // namespace rm_behavior

@@ -24,21 +24,20 @@
 
 namespace rm_behavior {
 
-class EventData : public BT::ConditionNode {
+class eventData : public BT::ConditionNode {
+
 public:
-  EventData(const std::string &name, const BT::NodeConfiguration &config);
+
+  eventData(const std::string &name, const BT::NodeConfig &config);
 
   static BT::PortsList providedPorts();
 
-  BT::NodeStatus tick() override;
-
 private:
-  rclcpp::Node::SharedPtr node_;
-  rclcpp::Subscription<auto_aim_interfaces::msg::Referee>::SharedPtr
-      subscription_;
-  uint32_t last_event_data_;
 
-  void refereeCallback(const auto_aim_interfaces::msg::Referee::SharedPtr msg);
+  BT::NodeStatus EventData();
+
+  rclcpp::Logger logger_ = rclcpp::get_logger("EventData");
+
 };
 
 } // namespace rm_behavior

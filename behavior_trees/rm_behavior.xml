@@ -17,28 +17,38 @@
 <TreeNodesModel>
 
 <!-- 接收串口发来的裁判系统信息并转换进入决策树 -->
-    <Condition ID="Referee">
+    <Condition ID="status_check">
         <input_port name="sentry_hp" default="0" type="int">Sentry HP</input_port>
         <input_port name="projectile_allowance_17mm" default="0" type="int">17mm Projectile Allowance</input_port>
-        <input_port name="rfid" default="0" type="int">RFID</input_port>
-        <input_port name="base_hp" default="0" type="int">Base HP</input_port>
-        <input_port name="outpost_hp" default="0" type="int">Outpost HP</input_port>
-        <output_port name="referee_decision" default="0;0;0" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Referee Decision</output_port>
+        <output_port name="status_ok" default="0" type="bool">Status OK</output_port>
     </Condition>
 
-<!-- rfid 判断节点 -->
+    <!-- rfid 判断节点 -->
     <Condition ID="rfid">
         <input_port name="rfid" default="0" type="int">RFID</input_port>
         <output_port name="center_buff_detected" default="0">central_buff_detected</output_port>
         <output_port name="supply_zone_detected" default="0">supply_zone_detected</output_port>
     </Condition>
     
-<!-- 机器人状态判断节点 -->
-    <Condition ID="status_dicision">
-    <input_port name="sentry_hp" default="0" type="int">Sentry HP</input_port>
-    <input_port name="base_hp" default="0" type="int">Base HP</input_port>
-    <input_port name="outpost_hp" default="0" type="int">Outpost HP</input_port>
+    <!-- 前哨和基地血量判断节点 -->
+    <Condition ID="hp_check">
+        <input_port name="hp" default="0" type="int">HP</input_port>
+        <output_port name="hp_ok" default="0" type="bool">HP OK</output_port>
     </Condition>
+
+    <!-- 场地关键数据 -->
+    <Condition ID="event_data">
+        <input_port name="event" default="0" type="int">Event</input_port>
+        <output_port name="event_data" default="0" type="int">Event Data</output_port>
+    </Condition>
+
+    <!-- 时间检测节点 -->
+    <Condition ID="time_check">
+        <input_port name="time" default="0" type="int">Time</input_port>
+        <output_port name="time_ok" default="0" type="bool">Time OK</output_port>
+    </Condition>
+
+
 
 <!-- 先按照陈佬的 topic 格式进行广播，ul 后再尝试 action 方式更新 -->
     <Condition ID="Nav2goal">

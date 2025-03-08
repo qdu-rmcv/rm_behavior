@@ -12,31 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RM_BEHAVIOR__PLUGINS__CONDITION__STATUS_CHECK_HPP_
-#define RM_BEHAVIOR__PLUGINS__CONDITION__STATUS_CHECK_HPP_
+#ifndef RM_BEHAVIOR__PLUGINS__CONDITION__RFID_HPP_
+#define RM_BEHAVIOR__PLUGINS__CONDITION__RFID_HPP_
 
-#include "behaviortree_cpp_v3/condition_node.h"
+#include "auto_aim_interfaces/msg/referee.hpp"
+#include "behaviortree_cpp/behavior_tree.h"
 #include <memory>
 #include <string>
 
 namespace rm_behavior {
 
-class statusCheck : public BT::ConditionNode {
+class rfid : public BT::ConditionNode {
 
 public:
 
-  statusCheck(const std::string &name, const BT::NodeConfig &config);
+  rfid(const std::string &name, const BT::NodeConfig &config);
 
   static BT::PortsList providedPorts();
 
 private:
 
-  BT::NodeStatus statusCheck();
+  BT::NodeStatus rfid();
 
-  rclcpp::Logger logger_ = rclcpp::get_logger("statusCheck");
-  
+  rclcpp::Logger logger_ = rclcpp::get_logger("rfid");
+
 };
 
 } // namespace rm_behavior
 
-#endif // RM_BEHAVIOR__PLUGINS__CONDITION__STATUS_CHECK_HPP_
+#endif // RM_BEHAVIOR__PLUGINS__CONDITION__RFID_HPP_

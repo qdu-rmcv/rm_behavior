@@ -36,50 +36,38 @@ rclcpp_components_register_node(action_client
 )
 
 ####### Conditions #######
-ament_auto_add_library(is_game_status SHARED plugins/condition/is_game_status.cpp)
-list(APPEND plugin_libs is_game_status)
 
+###### 场地关键数据判断 ######
+ament_auto_add_library(event_data SHARED plugins/condition/event_data.cpp)
+list(APPEND plugin_libs event_data)
+
+###### 被击打判断 ######
+# ament_auto_add_library(hit SHARED plugins/condition/hit.cpp)
+# list(APPEND plugin_libs hit)
+
+###### 前哨战与基地血量判断 ######
+# ament_auto_add_library(hp_check SHARED plugins/condition/hp_check.cpp)
+# list(APPEND plugin_libs hp_check)
+
+###### rfid 数据判断 ######
 ament_auto_add_library(rfid SHARED plugins/condition/rfid.cpp)
 list(APPEND plugin_libs rfid)
 
-ament_auto_add_library(is_status_ok SHARED plugins/condition/is_status_ok.cpp)
-list(APPEND plugin_libs is_status_ok)
+###### 哨兵状态判断 ######
+ament_auto_add_library(status_check SHARED plugins/condition/status_check.cpp)
+list(APPEND plugin_libs status_check)
 
-ament_auto_add_library(is_attacked SHARED plugins/condition/is_attacked.cpp)
-list(APPEND plugin_libs is_attacked)
+###### 比赛时间判断 ######
+ament_auto_add_library(time_check SHARED plugins/condition/time_check.cpp)
+list(APPEND plugin_libs time_check)
 
-ament_auto_add_library(is_detect_enemy SHARED plugins/condition/is_detect_enemy.cpp)
-list(APPEND plugin_libs is_detect_enemy)
+###### 追踪判断 ######
+# ament_auto_add_library(tracking SHARED plugins/condition/tracking.cpp)
+# list(APPEND plugin_libs tracking)
 
 ####### Actions #######
-ament_auto_add_library(send_nav2_goal SHARED plugins/action/send_nav2_goal.cpp)
-list(APPEND plugin_libs send_nav2_goal)
-
-ament_auto_add_library(pub_nav2_goal SHARED plugins/action/pub_nav2_goal.cpp)
-list(APPEND plugin_libs pub_nav2_goal)
-
-ament_auto_add_library(pub_twist SHARED plugins/action/pub_twist.cpp)
-list(APPEND plugin_libs pub_twist)
-
-ament_auto_add_library(pub_gimbal_absolute SHARED plugins/action/pub_gimbal_absolute.cpp)
-list(APPEND plugin_libs pub_gimbal_absolute)
-
-ament_auto_add_library(pub_gimbal_velocity SHARED plugins/action/pub_gimbal_velocity.cpp)
-list(APPEND plugin_libs pub_gimbal_velocity)
-
-ament_auto_add_library(calculate_attack_pose SHARED plugins/action/calculate_attack_pose.cpp)
-list(APPEND plugin_libs calculate_attack_pose)
-
-####### Controls #######
-ament_auto_add_library(recovery_node SHARED plugins/control/recovery_node.cpp)
-list(APPEND plugin_libs recovery_node)
-
-####### Decorators #######
-ament_auto_add_library(rate_controller SHARED plugins/decorator/rate_controller.cpp)
-list(APPEND plugin_libs rate_controller)
-
-ament_auto_add_library(tick_after_timeout_node SHARED plugins/decorator/tick_after_timeout_node.cpp)
-list(APPEND plugin_libs tick_after_timeout_node)
+ament_auto_add_library(nav2goal SHARED plugins/action/nav2goal.cpp)
+list(APPEND plugin_libs nav2goal)
 
 foreach(bt_plugin ${plugin_libs})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

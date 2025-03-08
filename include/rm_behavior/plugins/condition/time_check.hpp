@@ -24,21 +24,20 @@
 
 namespace rm_behavior {
 
-class TimeCheck : public BT::ConditionNode {
+class timeCheck : public BT::ConditionNode {
+
 public:
-  TimeCheck(const std::string &name, const BT::NodeConfiguration &config);
+
+  timeCheck(const std::string &name, const BT::NodeConfig &config);
 
   static BT::PortsList providedPorts();
 
-  BT::NodeStatus tick() override;
-
 private:
-  rclcpp::Node::SharedPtr node_;
-  rclcpp::Subscription<auto_aim_interfaces::msg::Referee>::SharedPtr
-      subscription_;
-  uint16_t last_time_;
 
-  void refereeCallback(const auto_aim_interfaces::msg::Referee::SharedPtr msg);
+  BT::NodeStatus timeCheck();
+
+  rclcpp::Logger logger_ = rclcpp::get_logger("timeCheck");
+  
 };
 
 } // namespace rm_behavior
