@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4">
+    <BehaviorTree ID="RMULdecision">
+    <Blackboard
+         central_buff="{'header':{'frame_id':'map'}, 'pose':{'position':{'x': 1.0, 'y': 0.0, 'z': 0.0}, 'orientation':{'x': 0, 'y': 0, 'z': 0, 'w': 0}}}"
+         supply_zone="{'header':{'frame_id':'map'}, 'pose':{'position':{'x':4.0, 'y': 0.0, 'z': 0.0}, 'orientation':{'x': 0, 'y': 0, 'z': 0, 'w': 0}}}">
+    </Blackboard>
+
+
+
+
+    </BehaviorTree>
+</root>
+
+
+<!-- the BT executor don't require this, but Groot does -->
+<TreeNodesModel>
+
+<!-- 接收串口发来的裁判系统信息并转换进入决策树 -->
+    <Condition ID="Referee">
+        <input_port name="sentry_hp" default="0" type="int">Sentry HP</input_port>
+        <input_port name="projectile_allowance_17mm" default="0" type="int">17mm Projectile Allowance</input_port>
+        <input_port name="rfid" default="0" type="int">RFID</input_port>
+        <input_port name="base_hp" default="0" type="int">Base HP</input_port>
+        <input_port name="outpost_hp" default="0" type="int">Outpost HP</input_port>
+        <output_port name="referee_decision" default="0;0;0" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Referee Decision</output_port>
+    </Condition>
+
+<!-- rfid 判断节点 -->
+    <Condition ID="rfid">
+        <input_port name="rfid" default="0" type="int">RFID</input_port>
+        <output_port name="center_buff_detected" default="0">central_buff_detected</output_port>
+        <output_port name="supply_zone_detected" default="0">supply_zone_detected</output_port>
+    </Condition>
+    
+<!-- 机器人状态判断节点 -->
+    <Condition ID="status_dicision">
+    <input_port name="sentry_hp" default="0" type="int">Sentry HP</input_port>
+    <input_port name="base_hp" default="0" type="int">Base HP</input_port>
+    <input_port name="outpost_hp" default="0" type="int">Outpost HP</input_port>
+    </Condition>
+
+<!-- 先按照陈佬的 topic 格式进行广播，ul 后再尝试 action 方式更新 -->
+    <Condition ID="Nav2goal">
+     <input_port name="goal"
+                  default="0;0;0"
+                  type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Expected goal pose that send to nav2. Fill with format `x;y;yaw`</input_port>
+      <input_port name="topic_name"
+                  default="__default__placeholder__"
+                  type="std::string">Topic name</input_port>
+    </Condition>
+
+<!-- tracker 后追踪节点,后续更新 -->
+    <Condition ID="DeteckedTrackere">
+    </Condition>
+
+<!-- 装甲板受到击打反馈后续更新 -->
+    <Condition ID="ArmorHit">
+        <input_port name="armor_hit" default="0" type="int">Armor Hit</input_port>
+        <output_port name="armor_hit_feedback" default="0" type="int">Armor Hit Feedback</output_port>
+    </Condition>
+
+    <Action ID="gimbalgoal"></Action>
+
+</TreeNodesModel>
