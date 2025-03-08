@@ -12,34 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RM_BEHAVIOR__PLUGINS__CONDITION__STATUS_CHECK_HPP_
-#define RM_BEHAVIOR__PLUGINS__CONDITION__STATUS_CHECK_HPP_
+#ifndef RM_BEHAVIOR/PLUGINS/CONDITION/STATUS_CHECK_HPP_
+#define RM_BEHAVIOR/PLUGINS/CONDITION/STATUS_CHECK_HPP_
 
-#include "auto_aim_interfaces/msg/referee.hpp"
-#include "behaviortree_cpp/behavior_tree.h"
-#include "rclcpp/rclcpp.hpp"
 #include <memory>
 #include <string>
 
-namespace rm_behavior {
+namespace namespace_name {
 
-class StatusCheck : public BT::ConditionNode {
+class ClassName {
 public:
-  StatusCheck(const std::string &name, const BT::NodeConfiguration &config);
+    ClassName();
+    ~ClassName();
 
-  static BT::PortsList providedPorts();
+    static void providedPorts();
 
-  BT::NodeStatus tick() override;
+    bool setGoal();
+    void onHalt();
 
-private:
-  rclcpp::Node::SharedPtr node_;
-  rclcpp::Subscription<auto_aim_interfaces::msg::Referee>::SharedPtr
-      subscription_;
-  uint8_t last_rfid_;
-
-  void refereeCallback(const auto_aim_interfaces::msg::Referee::SharedPtr msg);
 };
 
-} // namespace rm_behavior
+}  // namespace namespace_name
 
-#endif // RM_BEHAVIOR__PLUGINS__CONDITION__STATUS_CHECK_HPP_
+#endif  // RM_BEHAVIOR/PLUGINS/CONDITION/STATUS_CHECK_HPP_
