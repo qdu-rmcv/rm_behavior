@@ -14,4 +14,16 @@
 
 //rm_behavior.cpp
 
-#include 
+#include <filesystem>
+#include <fstream>
+
+#include "rm_behavior/rm_behavior.hpp"
+#include "rm_behavior/plugins/condition/time_check.hpp"
+#include "rm_behavior/plugins/condition/stauts_check.hpp"
+#include "rm_behavior/plugins/action/nav2goal.hpp"
+#include "rm_behavior/plugins/condition/tracking.hpp"
+
+namespace rm_behavior
+{
+    
+}

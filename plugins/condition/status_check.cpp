@@ -1,38 +1,22 @@
+// Copyright 2025 Jquark
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+//status_check.cpp
+
 #include "rm_behavior/plugins/condition/status_check.hpp"
 
-namespace rm_behavior {
-
-status_check::status_check(const std::string &name,
-                           const BT::NodeConfiguration &config)
-    : BT::ConditionNode(name, config) {}
-
-BT::PortsList status_check::providedPorts() {
-  return {BT::InputPort<int>("sentry_hp"),
-          BT::InputPort<int>("projectile_allowance_17mm"),
-          BT::OutputPort<bool>("status_ok")};
+namespace rm_behavior
+{
+    
 }
-
-BT::NodeStatus status_check::tick() {
-  int sentry_hp;
-  int projectile_allowance_17mm;
-  bool status_ok = false;
-
-  if (!getInput("sentry_hp", sentry_hp) ||
-      !getInput("projectile_allowance_17mm", projectile_allowance_17mm)) {
-    RCLCPP_ERROR(rclcpp::get_logger("status_check"),
-                 "Failed to get input ports");
-    return BT::NodeStatus::FAILURE;
-  }
-
-  // 简单示例：如果 sentry_hp 和 projectile_allowance_17mm 都大于
-  // 0，则认为状态正常
-  if (sentry_hp > 150 && projectile_allowance_17mm > 0) {
-    status_ok = true;
-  }
-
-  setOutput("status_ok", status_ok);
-
-  return status_ok ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
-}
-
-} // namespace rm_behavior

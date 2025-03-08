@@ -33,7 +33,7 @@ public:
 
 private:
 
-  BT::NodeStatus hit();
+  BT::NodeStatus hitCheck();
 
   rclcpp::Logger logger_ = rclcpp::get_logger("hit");
 

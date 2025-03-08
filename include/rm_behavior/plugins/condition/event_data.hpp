@@ -24,17 +24,17 @@
 
 namespace rm_behavior {
 
-class eventData : public BT::ConditionNode {
+class eventDataCondition : public BT::ConditionNode {
 
 public:
 
-  eventData(const std::string &name, const BT::NodeConfig &config);
+  eventDataCondition(const std::string &name, const BT::NodeConfig &config);
 
   static BT::PortsList providedPorts();
 
 private:
 
-  BT::NodeStatus EventData();
+  BT::NodeStatus EventDataCheck();
 
   rclcpp::Logger logger_ = rclcpp::get_logger("EventData");
 

@@ -12,31 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// time_check.cpp
+//time_check.cpp
+
 #include "rm_behavior/plugins/condition/time_check.hpp"
 
-namespace rm_behavior {
+namespace rm_behavior
+{
+  
+timeCheckCondition::timeCheckCondition(const std::string &name, const BT::NodeConfig &config)
+   : BT::ConditionNode(name,std::bind(&timeCheckCondition::timeCheck,config) {}
 
-TimeCheck::TimeCheck(const std::string &name,
-                     const BT::NodeConfiguration &config)
-    : BT::ConditionNode(name, config) {
-  node_ = rclcpp::Node::make_shared("time_check_node");
-  subscription_ = node_->create_subscription<auto_aim_interfaces::msg::Referee>(
-      "referee", 10,
-      std::bind(&TimeCheck::refereeCallback, this, std::placeholders::_1));
+BT::NodeStatus timeCheckCondition::tick()
+{
+  auto referee = getInput<auto_aim_interfaces::msg::Referee>("referee");
+  if (!referee)
+  {
+    RCLCPP_ERROR(node_->get_logger(), "Failed to get referee input");
+    return BT::NodeStatus::FAILURE;
+  }
+
+  // Specifically check the stage_time_left field from the referee message
+  if (referee->stage_time_left.sec < 60)
+  {
+    RCLCPP_INFO(node_->get_logger(), "Time check passed: %d seconds left", referee->stage_time_left.sec);
+    return BT::NodeStatus::SUCCESS;
+  }
+  else
+  {
+    RCLCPP_DEBUG(node_->get_logger(), "Time check failed: %d seconds left", referee->stage_time_left.sec);
+    return BT::NodeStatus::FAILURE;
+  }
 }
 
-BT::PortsList TimeCheck::providedPorts() { return {}; }
 
-BT::NodeStatus TimeCheck::tick() {
-  rclcpp::spin_some(node_);
-  // 这里可以根据 last_time_ 进行时间检查，示例中简单返回 SUCCESS
-  return BT::NodeStatus::SUCCESS;
 }
-
-void TimeCheck::refereeCallback(
-    const auto_aim_interfaces::msg::Referee::SharedPtr msg) {
-  last_time_ = msg->time;
-}
-
-} // namespace rm_behavior

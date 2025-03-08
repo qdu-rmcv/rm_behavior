@@ -1,4 +1,4 @@
-// Copyright 2025 Jquark
+// Copyright 2025 Lihan Chen
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RM_BEHAVIOR__PLUGINS__ACTION__NAV2GOAL_HPP_
-#define RM_BEHAVIOR__PLUGINS__ACTION__NAV2GOAL_HPP_
+#ifndef PB2025_SENTRY_BEHAVIOR__PLUGINS__ACTION__PUB_NAV2_GOAL_HPP_
+#define PB2025_SENTRY_BEHAVIOR__PLUGINS__ACTION__PUB_NAV2_GOAL_HPP_
+
+#include <string>
 
 #include "behaviortree_ros2/bt_topic_pub_node.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
-#include <memory>
-#include <string>
-
-namespace rm_behavior {
-
-class Nav2GoalAction : public BT::RosTopicPubNode<geometry_msgs::msg::PoseStamped> {
+namespace pb2025_sentry_behavior {
+class Nav2GoalAction
+    : public BT::RosTopicPubNode<geometry_msgs::msg::PoseStamped> {
 public:
   Nav2GoalAction(const std::string &name, const BT::NodeConfig &conf,
                     const BT::RosNodeParams &params);
@@ -36,7 +35,6 @@ private:
   rclcpp::Logger logger() { return node_->get_logger(); }
   rclcpp::Time now() { return node_->now(); }
 };
+} // namespace pb2025_sentry_behavior
 
-}  // namespace rm_behavior
-
-#endif  // RM_BEHAVIOR__PLUGINS__ACTION__NAV2GOAL_HPP_
+#endif // PB2025_SENTRY_BEHAVIOR__PLUGINS__ACTION__PUB_NAV2_GOAL_HPP_

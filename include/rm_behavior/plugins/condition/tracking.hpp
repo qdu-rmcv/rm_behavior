@@ -25,11 +25,11 @@
 
 namespace rm_behavior {
 
-class tracking : public BT::ConditionNode {
+class trackingCondition : public BT::ConditionNode {
 
 public:
 
-  tracking(const std::string &name, const BT::NodeConfig &config);
+  trackingCondition(const std::string &name, const BT::NodeConfig &config);
 
   static BT::PortsList providedPorts();
 

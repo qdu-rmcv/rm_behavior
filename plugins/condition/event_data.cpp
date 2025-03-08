@@ -12,31 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// event_data_check.cpp
+//event_data.cpp
 #include "rm_behavior/plugins/condition/event_data.hpp"
 
 namespace rm_behavior {
-
-EventDataCheck::EventDataCheck(const std::string &name,
-                               const BT::NodeConfiguration &config)
-    : BT::ConditionNode(name, config) {
-  node_ = rclcpp::Node::make_shared("event_data_node");
-  subscription_ = node_->create_subscription<auto_aim_interfaces::msg::Referee>(
-      "referee", 10,
-      std::bind(&EventDataCheck::refereeCallback, this, std::placeholders::_1));
+  eventDataCondition::eventDataCondition(const std::string &name, const BT::NodeConfig &config)
+      : BT::ConditionNode(name,config) {}
 }
-
-BT::PortsList EventDataCheck::providedPorts() { return {}; }
-
-BT::NodeStatus EventDataCheck::tick() {
-  rclcpp::spin_some(node_);
-  // 这里可以根据 last_event_data_ 进行事件数据检查，示例中简单返回 SUCCESS
-  return BT::NodeStatus::SUCCESS;
-}
-
-void EventDataCheck::refereeCallback(
-    const auto_aim_interfaces::msg::Referee::SharedPtr msg) {
-  last_event_data_ = msg->event_data;
-}
-
-} // namespace rm_behavior

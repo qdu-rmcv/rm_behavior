@@ -24,11 +24,11 @@
 
 namespace rm_behavior {
 
-class timeCheck : public BT::ConditionNode {
+class timeCheckCondition : public BT::ConditionNode {
 
 public:
 
-  timeCheck(const std::string &name, const BT::NodeConfig &config);
+  timeCheckCondition(const std::string &name, const BT::NodeConfig &config);
 
   static BT::PortsList providedPorts();
 

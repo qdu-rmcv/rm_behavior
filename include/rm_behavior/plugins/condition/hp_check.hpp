@@ -24,11 +24,11 @@
 
 namespace rm_behavior {
 
-class HPCheck : public BT::SimpleConditionNode {
+class HPCheckCondition : public BT::SimpleConditionNode {
   
 public:
 
-  HPCheck(const std::string &name, const BT::NodeConfig &config);
+  HPCheckCondition(const std::string &name, const BT::NodeConfig &config);
 
   static BT::PortsList providedPorts();
 

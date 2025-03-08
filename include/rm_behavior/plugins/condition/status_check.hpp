@@ -21,11 +21,11 @@
 
 namespace rm_behavior {
 
-class statusCheck : public BT::ConditionNode {
+class statusCheckCondition : public BT::ConditionNode {
 
 public:
 
-  statusCheck(const std::string &name, const BT::NodeConfig &config);
+  statusCheckCondition(const std::string &name, const BT::NodeConfig &config);
 
   static BT::PortsList providedPorts();
 

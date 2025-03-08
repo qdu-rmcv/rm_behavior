@@ -22,17 +22,17 @@
 
 namespace rm_behavior {
 
-class rfid : public BT::ConditionNode {
+class rfidCondition : public BT::ConditionNode {
 
 public:
 
-  rfid(const std::string &name, const BT::NodeConfig &config);
+  rfidCondition(const std::string &name, const BT::NodeConfig &config);
 
   static BT::PortsList providedPorts();
 
 private:
 
-  BT::NodeStatus rfid();
+  BT::NodeStatus rfidCondition();
 
   rclcpp::Logger logger_ = rclcpp::get_logger("rfid");
 
