@@ -24,16 +24,7 @@ ament_auto_find_build_dependencies()
 ## Build ##
 ###########
 
-ament_auto_add_executable(pb2025_sentry_behavior_server src/pb2025_sentry_behavior_server.cpp)
-
-ament_auto_add_library(action_client SHARED
-  src/pb2025_sentry_behavior_client.cpp
-)
-
-rclcpp_components_register_node(action_client
-  PLUGIN pb2025_sentry_behavior::SentryBehaviorClient
-  EXECUTABLE pb2025_sentry_behavior_client
-)
+ament_auto_add_executable(rm_behavior src/rm_behavior.cpp)
 
 ####### Conditions #######
 
