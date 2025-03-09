@@ -25,7 +25,6 @@ namespace rm_behavior {
 RmBehaviorServer::RmBehaviorServer(const rclcpp::NodeOptions & options)
 : BT::TreeExecutionServer(options),
   tick_count_(0), use_logger_(false) {
-  // 从参数服务器获取树名称，提供默认值
   this->node()->declare_parameter<std::string>("default_tree", "rm_behavior_server");
   std::string default_tree_name;
   this->node()->get_parameter("default_tree", default_tree_name);
