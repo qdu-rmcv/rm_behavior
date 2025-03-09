@@ -25,24 +25,25 @@ namespace rm_behavior {
 RmBehaviorServer::RmBehaviorServer(const rclcpp::NodeOptions & options)
 : BT::TreeExecutionServer(options),
   tick_count_(0), use_logger_(false) {
-  this->node()->declare_parameter<std::string>("default_tree", "rm_behavior_server");
+  // 声明并获取参数
+  this->node()->declare_parameter<std::string>("default_tree", "rm_behavior");
   std::string default_tree_name;
   this->node()->get_parameter("default_tree", default_tree_name);
   
-  // 注册可用的树
-  for (const auto & entry : std::filesystem::directory_iterator(this->node()->get_parameter("bt_xml_dir").as_string())) {
-    if (entry.path().extension() == ".xml") {
-      std::string tree_path = entry.path().string();
-      std::string tree_name = entry.path().stem().string();
-      RCLCPP_INFO(this->node()->get_logger(), "Registering tree: %s from %s", 
-                 tree_name.c_str(), tree_path.c_str());
-      this->registerTree(tree_name, tree_path);
-    }
-  }
-
+  this->node()->declare_parameter<std::string>("bt_xml_dir", 
+    std::filesystem::current_path().string() + "/behavior_trees");
+  std::string bt_xml_dir = this->node()->get_parameter("bt_xml_dir").as_string();
+  
+  RCLCPP_INFO(this->node()->get_logger(), "Loading behavior trees from: %s", bt_xml_dir.c_str());
+  
+  // 初始化共享黑板
   shared_blackboard_ = BT::Blackboard::create();
+  
+  // 声明并获取其他参数
   this->node()->declare_parameter("use_logger", true);
   use_logger_ = this->node()->get_parameter("use_logger").as_bool();
+  
+  // 设置发布器
   goal_pose_pub_ = this->node()->create_publisher<geometry_msgs::msg::PoseStamped>(
     "/goal_pose", 10);
     
@@ -63,40 +64,73 @@ RmBehaviorServer::RmBehaviorServer(const rclcpp::NodeOptions & options)
   subscriptions_.push_back(referee_subscription);
   RCLCPP_INFO(this->node()->get_logger(), "Subscribed to /referee topic with individual field mapping");
   
-  // 记录其他必要的系统状态信息
-  // 例如，机器人位置、装甲板检测结果等
-  // subscribe<geometry_msgs::msg::PoseStamped>("/robot_pose", "robot_pose");
-  // subscribe<armor_detector::msg::ArmorList>("/armor_detector/armors", "detected_armors");
-  
+  // 记录启动时间
   start_time_ = this->node()->now();
   
   RCLCPP_INFO(this->node()->get_logger(), "RmBehaviorServer initialized successfully");
 }
 
-// 获取黑板的统一访问方法实现
-BT::Blackboard::Ptr RmBehaviorServer::getTreeBlackboard() {
-  if (current_tree_.has_value()) {
-    // 如果有活动的树，使用树的黑板
-    return current_tree_.value().get().subtrees[0]->blackboard;
+// 重写registerNodesIntoFactory方法，在此方法中注册行为树
+void RmBehaviorServer::registerNodesIntoFactory(BT::BehaviorTreeFactory& factory)
+{
+  // 调用基类的方法
+  TreeExecutionServer::registerNodesIntoFactory(factory);
+  
+  // 从XML目录注册行为树
+  std::string bt_xml_dir = this->node()->get_parameter("bt_xml_dir").as_string();
+  
+  try {
+    for (const auto & entry : std::filesystem::directory_iterator(bt_xml_dir)) {
+      if (entry.path().extension() == ".xml") {
+        std::string tree_path = entry.path().string();
+        std::string tree_name = entry.path().stem().string();
+        RCLCPP_INFO(this->node()->get_logger(), "Registering tree: %s from %s", 
+                  tree_name.c_str(), tree_path.c_str());
+        
+        // 正确的注册方式：使用factory注册树
+        try {
+          factory.registerBehaviorTreeFromFile(tree_path);
+        } catch (const std::exception& e) {
+          RCLCPP_ERROR(this->node()->get_logger(), "Failed to register tree from file %s: %s", 
+                       tree_path.c_str(), e.what());
+        }
+      }
+    }
+  } catch (const std::exception& e) {
+    RCLCPP_ERROR(this->node()->get_logger(), "Error while loading behavior trees: %s", e.what());
   }
-  // 否则使用共享黑板
+}
+
+// 获取黑板的统一访问方法
+BT::Blackboard::Ptr RmBehaviorServer::getTreeBlackboard() {
+  // 只有在运行中的树能够获取其黑板
+  try {
+    // 使用const_cast处理const问题
+    BT::Tree& non_const_tree = const_cast<BT::Tree&>(this->tree());
+    if (non_const_tree.rootNode()) {
+      return non_const_tree.rootBlackboard();
+    }
+  }
+  catch (const std::exception& e) {
+    // 可能没有活动的树
+    RCLCPP_DEBUG(this->node()->get_logger(), "Failed to get tree blackboard: %s", e.what());
+  }
+  // 如果没有活动的树或出现异常，返回共享黑板
   return shared_blackboard_;
 }
 
+// 重写onGoalReceived方法
 bool RmBehaviorServer::onGoalReceived(const std::string & tree_name, const std::string & payload) {
   RCLCPP_INFO(
     this->node()->get_logger(), 
     "Received request to execute behavior tree: %s with payload: %s", 
     tree_name.c_str(), payload.c_str());
   
-  // 在这里可以添加验证逻辑，例如检查树名称是否有效
   return true;  // 允许执行行为树
 }
 
+// 重写onTreeCreated方法
 void RmBehaviorServer::onTreeCreated(BT::Tree & tree) {
-  // 保存树引用
-  current_tree_ = std::ref(tree);
-  
   // 重置计数器
   tick_count_ = 0;
   
@@ -107,26 +141,24 @@ void RmBehaviorServer::onTreeCreated(BT::Tree & tree) {
   }
   
   // 将当前时间点记录在黑板上，方便节点使用
-  auto bb = getTreeBlackboard();
+  auto bb = tree.rootBlackboard();
   bb->set("start_time", this->node()->now());
   
-  // 初始化裁判系统相关的黑板变量（以防在收到第一条消息前行为树就开始执行）
+  // 初始化裁判系统相关的黑板变量
   bb->set("event_data", 0u);
   bb->set("rfid", 0u);
   bb->set("base_hp", 0u);
   bb->set("sentry_hp", 0u);
   bb->set("outpost_hp", 0u);
-  bb->set("projectile_allowance", 0u);
+  bb->set("projectile_allowance_17mm", 0u);
   
   // 复制共享黑板中的数据到树黑板
   if (shared_blackboard_) {
     for (const auto& key_str : shared_blackboard_->getKeys()) {
       try {
         std::string key(key_str);
-        auto value = shared_blackboard_->getAnyLocked(key);
-        if (value) {  // 检查LockedPtr是否有效
-          bb->set(key, *value);  // 直接解引用
-        }
+        // 键肯定存在，因为它是从 getKeys() 获取的
+        bb->set(key, shared_blackboard_->get<BT::Any>(key));
       } catch (const std::exception& e) {
         RCLCPP_WARN(
           this->node()->get_logger(), 
@@ -139,6 +171,7 @@ void RmBehaviorServer::onTreeCreated(BT::Tree & tree) {
   RCLCPP_INFO(this->node()->get_logger(), "Behavior tree created successfully with initialized referee data");
 }
 
+// 重写onLoopAfterTick方法
 std::optional<BT::NodeStatus> RmBehaviorServer::onLoopAfterTick(BT::NodeStatus status) {
   tick_count_++;
   
@@ -151,16 +184,12 @@ std::optional<BT::NodeStatus> RmBehaviorServer::onLoopAfterTick(BT::NodeStatus s
       elapsed, tick_count_);
   }
   
-  // 检查是否需要中断行为树执行
-  // 例如，如果检测到紧急情况，可以返回状态使行为树提前终止
-  
   return std::nullopt;  // 继续正常执行
 }
 
+// 重写onTreeExecutionCompleted方法
 std::optional<std::string> RmBehaviorServer::onTreeExecutionCompleted(
   BT::NodeStatus status, bool was_cancelled) {
-  // 树执行完成后，清除树引用
-  current_tree_.reset();
   
   if (was_cancelled) {
     RCLCPP_WARN(this->node()->get_logger(), "Behavior tree execution was cancelled");
@@ -176,6 +205,32 @@ std::optional<std::string> RmBehaviorServer::onTreeExecutionCompleted(
   }
 }
 
+std::optional<std::string> RmBehaviorServer::onLoopFeedback() {
+  if (tick_count_ % 10 == 0) {
+    auto bb = this->getTreeBlackboard();
+    std::stringstream ss;
+    ss << "Tree [" << this->treeName() << "] has completed " 
+       << tick_count_ << " ticks\n";
+    
+    // 添加关键黑板值的输出
+    try {
+      ss << "Referee data: "
+         << "event_data=" << bb->get<unsigned int>("event_data") << ", "
+         << "rfid=" << static_cast<int>(bb->get<unsigned int>("rfid")) << ", "
+         << "base_hp=" << bb->get<unsigned int>("base_hp") << ", "
+         << "sentry_hp=" << bb->get<unsigned int>("sentry_hp") << ", "
+         << "outpost_hp=" << bb->get<unsigned int>("outpost_hp") << ", "
+         << "projectile=" << bb->get<unsigned int>("projectile_allowance_17mm");
+    } catch (const std::exception& e) {
+      ss << "Error reading blackboard: " << e.what();
+    }
+    
+    return ss.str();
+  }
+  return std::nullopt;
+}
+
+// 目标位置发布方法
 void RmBehaviorServer::publishGoalPose(const geometry_msgs::msg::PoseStamped & pose) {
   goal_pose_pub_->publish(pose);
   RCLCPP_INFO(
@@ -186,40 +241,31 @@ void RmBehaviorServer::publishGoalPose(const geometry_msgs::msg::PoseStamped & p
 
 }  // namespace rm_behavior
 
-int main(int argc, char * argv[]) {
-    rclcpp::init(argc, argv);
-
-    rclcpp::NodeOptions options;
-    
-    // 可以通过命令行参数覆盖默认值
-    std::vector<std::string> args = rclcpp::remove_ros_arguments(argc, argv);
-    if (args.size() > 1) {
-        std::string xml_path = args[1];
-        std::filesystem::path bt_path(xml_path);
-        if (bt_path.parent_path() != "") {
-            options.parameter_overrides().push_back(
-                rclcpp::Parameter("bt_xml_dir", bt_path.parent_path().string()));
-        }
-    } else {
-        // 设置默认的行为树XML文件目录
-        std::string default_bt_xml_dir = std::filesystem::current_path().string() + "/behavior_trees";
-        options.parameter_overrides().push_back(
-            rclcpp::Parameter("bt_xml_dir", default_bt_xml_dir));
-        
-        // 确保目录存在
-        if (!std::filesystem::exists(default_bt_xml_dir)) {
-            std::filesystem::create_directories(default_bt_xml_dir);
-        }
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  
+  rclcpp::NodeOptions options;
+  
+  std::string default_bt_xml_dir = std::filesystem::current_path().string() + "/behavior_trees";
+  options.parameter_overrides().push_back(
+    rclcpp::Parameter("bt_xml_dir", default_bt_xml_dir));
+  
+  if (!std::filesystem::exists(default_bt_xml_dir)) {
+    try {
+      std::filesystem::create_directories(default_bt_xml_dir);
+      std::cout << "Created directory: " << default_bt_xml_dir << std::endl;
+    } catch (const std::exception& e) {
+      std::cerr << "Failed to create directory: " << e.what() << std::endl;
     }
-    
-    auto action_server = std::make_shared<rm_behavior::RmBehaviorServer>(options);
-    RCLCPP_INFO(action_server->node()->get_logger(), "Starting RmBehaviorServer");
-
-    rclcpp::executors::MultiThreadedExecutor exec;
-    exec.add_node(action_server->node());
-    exec.spin();
-    exec.remove_node(action_server->node());
-
-    rclcpp::shutdown();
-    return 0;
+  }
+  
+  auto behavior_server = std::make_shared<rm_behavior::RmBehaviorServer>(options);
+  
+  rclcpp::executors::MultiThreadedExecutor exec;
+  exec.add_node(behavior_server->node());
+  exec.spin();
+  
+  rclcpp::shutdown();
+  return 0;
 }

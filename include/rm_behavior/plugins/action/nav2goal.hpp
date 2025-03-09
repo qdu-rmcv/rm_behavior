@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef PB2025_SENTRY_BEHAVIOR__PLUGINS__ACTION__PUB_NAV2_GOAL_HPP_
-#define PB2025_SENTRY_BEHAVIOR__PLUGINS__ACTION__PUB_NAV2_GOAL_HPP_
+#ifndef RM_BEHAVIOR__PLUGINS__ACTION__PUB_NAV2_GOAL_HPP_
+#define RM_BEHAVIOR__PLUGINS__ACTION__PUB_NAV2_GOAL_HPP_
 
 #include <string>
 
 #include "behaviortree_ros2/bt_topic_pub_node.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
-namespace pb2025_sentry_behavior {
+namespace rm_behavior {
 class Nav2GoalAction
     : public BT::RosTopicPubNode<geometry_msgs::msg::PoseStamped> {
 public:

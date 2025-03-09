@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
-    <BehaviorTree ID="rmul_behavior" description="rm_behavior">
+    <BehaviorTree ID="rm_behavior" description="rmul_behavior">
     <Blackboard
          central_buff="{'header':{'frame_id':'map'}, 'pose':{'position':{'x': 1.0, 'y': 0.0, 'z': 0.0}, 'orientation':{'x': 0, 'y': 0, 'z': 0, 'w': 0}}}"
          supply_zone="{'header':{'frame_id':'map'}, 'pose':{'position':{'x':4.0, 'y': 0.0, 'z': 0.0}, 'orientation':{'x': 0, 'y': 0, 'z': 0, 'w': 0}}}">

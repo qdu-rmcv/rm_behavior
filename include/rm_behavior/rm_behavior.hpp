@@ -15,15 +15,14 @@
 #ifndef RM_BEHAVIOR__RM_BEHAVIOR_HPP_
 #define RM_BEHAVIOR__RM_BEHAVIOR_HPP_
 
-#include <behaviortree_cpp/loggers/bt_cout_logger.h>
-#include <behaviortree_cpp/blackboard.h>
-
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
-#include <optional>
+#include <filesystem>
 
 #include "behaviortree_ros2/tree_execution_server.hpp"
+#include "behaviortree_cpp/loggers/bt_cout_logger.h"
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "auto_aim_interfaces/msg/referee.hpp"
@@ -42,6 +41,8 @@ public:
   std::optional<BT::NodeStatus> onLoopAfterTick(BT::NodeStatus status) override;
   std::optional<std::string> onTreeExecutionCompleted(
     BT::NodeStatus status, bool was_cancelled) override;
+  std::optional<std::string> onLoopFeedback() override;
+  void registerNodesIntoFactory(BT::BehaviorTreeFactory& factory) override;
 
   // 目标位置发布方法
   void publishGoalPose(const geometry_msgs::msg::PoseStamped & pose);
@@ -68,29 +69,15 @@ private:
     RCLCPP_INFO(this->node()->get_logger(), "Subscribed to %s on blackboard key %s", topic.c_str(), bb_key.c_str());
   }
 
-  // 存储所有订阅对象
   std::vector<std::shared_ptr<rclcpp::SubscriptionBase>> subscriptions_;
-  
-  // 目标位置发布者
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr goal_pose_pub_;
-  
-  // 行为树日志记录器
   std::shared_ptr<BT::StdCoutLogger> logger_;
-  
-  // 行为树状态相关
   uint32_t tick_count_;
   bool use_logger_;
-  
-  // 记录节点启动时间，用于计算运行时间
   rclcpp::Time start_time_;
-  
-  // 共享黑板，用于在没有活动树时存储数据
   BT::Blackboard::Ptr shared_blackboard_;
-  
-  // 当前活动树的指针
-  std::optional<std::reference_wrapper<BT::Tree>> current_tree_;
 };
 
 }  // namespace rm_behavior
 
-#endif // RM_BEHAVIOR__RM_BEHAVIOR_HPP_
+#endif  // RM_BEHAVIOR__RM_BEHAVIOR_HPP_

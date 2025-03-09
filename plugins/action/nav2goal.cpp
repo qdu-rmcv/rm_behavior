@@ -44,4 +44,4 @@ BT::PortsList Nav2GoalAction::providedPorts() {
 } // namespace pb2025_sentry_behavior
 
 #include "behaviortree_ros2/plugins.hpp"
-CreateRosNodePlugin(pb2025_sentry_behavior::Nav2GoalAction, "Nav2Goal");
+CreateRosNodePlugin(rm_behavior::Nav2GoalAction, "Nav2Goal");

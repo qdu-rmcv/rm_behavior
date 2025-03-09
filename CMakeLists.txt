@@ -92,6 +92,5 @@ install(
 ament_auto_package(
   INSTALL_TO_SHARE
   behavior_trees
-  params
   launch
 )
