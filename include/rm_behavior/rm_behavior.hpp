@@ -16,6 +16,7 @@
 #define RM_BEHAVIOR__RM_BEHAVIOR_HPP_
 
 #include <behaviortree_cpp/loggers/bt_cout_logger.h>
+#include <behaviortree_cpp/blackboard.h>
 
 #include <memory>
 #include <string>
@@ -46,22 +47,25 @@ public:
   void publishGoalPose(const geometry_msgs::msg::PoseStamped & pose);
 
 private:
+  // 获取黑板的统一访问方法
+  BT::Blackboard::Ptr getTreeBlackboard();
+
   // 话题订阅模板方法
   template <typename T>
   void subscribe(
     const std::string & topic, const std::string & bb_key,
     const rclcpp::QoS & qos = rclcpp::QoS(10))
   {
-    auto subscription = this->create_subscription<T>(
+    auto subscription = this->node()->create_subscription<T>(
       topic, qos,
       [this, bb_key](const typename T::SharedPtr msg) {
         // 将接收到的消息存入行为树黑板
-        this->getBlackboard()->set(bb_key, *msg);
-        RCLCPP_DEBUG(this->get_logger(), "Received message on topic %s and saved to blackboard", bb_key.c_str());
+        this->getTreeBlackboard()->set(bb_key, *msg);
+        RCLCPP_DEBUG(this->node()->get_logger(), "Received message on topic %s and saved to blackboard", bb_key.c_str());
       });
       
     subscriptions_.push_back(subscription);
-    RCLCPP_INFO(this->get_logger(), "Subscribed to %s on blackboard key %s", topic.c_str(), bb_key.c_str());
+    RCLCPP_INFO(this->node()->get_logger(), "Subscribed to %s on blackboard key %s", topic.c_str(), bb_key.c_str());
   }
 
   // 存储所有订阅对象
@@ -79,6 +83,12 @@ private:
   
   // 记录节点启动时间，用于计算运行时间
   rclcpp::Time start_time_;
+  
+  // 共享黑板，用于在没有活动树时存储数据
+  BT::Blackboard::Ptr shared_blackboard_;
+  
+  // 当前活动树的指针
+  std::optional<std::reference_wrapper<BT::Tree>> current_tree_;
 };
 
 }  // namespace rm_behavior

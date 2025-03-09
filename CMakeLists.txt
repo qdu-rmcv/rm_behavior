@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(pb2025_sentry_behavior)
+project(rm_behavior)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,8 +29,8 @@ ament_auto_add_executable(rm_behavior src/rm_behavior.cpp)
 ####### Conditions #######
 
 ###### 场地关键数据判断 ######
-ament_auto_add_library(event_data SHARED plugins/condition/event_data.cpp)
-list(APPEND plugin_libs event_data)
+# ament_auto_add_library(event_data SHARED plugins/condition/event_data.cpp)
+# list(APPEND plugin_libs event_data)
 
 ###### 被击打判断 ######
 # ament_auto_add_library(hit SHARED plugins/condition/hit.cpp)
@@ -41,16 +41,16 @@ list(APPEND plugin_libs event_data)
 # list(APPEND plugin_libs hp_check)
 
 ###### rfid 数据判断 ######
-ament_auto_add_library(rfid SHARED plugins/condition/rfid.cpp)
-list(APPEND plugin_libs rfid)
+# ament_auto_add_library(rfid SHARED plugins/condition/rfid.cpp)
+# list(APPEND plugin_libs rfid)
 
-###### 哨兵状态判断 ######
-ament_auto_add_library(status_check SHARED plugins/condition/status_check.cpp)
-list(APPEND plugin_libs status_check)
+# ###### 哨兵状态判断 ######
+# ament_auto_add_library(status_check SHARED plugins/condition/status_check.cpp)
+# list(APPEND plugin_libs status_check)
 
-###### 比赛时间判断 ######
-ament_auto_add_library(time_check SHARED plugins/condition/time_check.cpp)
-list(APPEND plugin_libs time_check)
+# ###### 比赛时间判断 ######
+# ament_auto_add_library(time_check SHARED plugins/condition/time_check.cpp)
+# list(APPEND plugin_libs time_check)
 
 ###### 追踪判断 ######
 # ament_auto_add_library(tracking SHARED plugins/condition/tracking.cpp)

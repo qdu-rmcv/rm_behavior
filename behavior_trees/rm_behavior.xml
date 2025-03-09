@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
-    <BehaviorTree ID="RMULdecision">
+    <BehaviorTree ID="rm_behavior" description="rm_behavior">
     <Blackboard
          central_buff="{'header':{'frame_id':'map'}, 'pose':{'position':{'x': 1.0, 'y': 0.0, 'z': 0.0}, 'orientation':{'x': 0, 'y': 0, 'z': 0, 'w': 0}}}"
          supply_zone="{'header':{'frame_id':'map'}, 'pose':{'position':{'x':4.0, 'y': 0.0, 'z': 0.0}, 'orientation':{'x': 0, 'y': 0, 'z': 0, 'w': 0}}}">
@@ -16,7 +16,7 @@
 <!-- the BT executor don't require this, but Groot does -->
 <TreeNodesModel>
 
-<!-- 接收串口发来的裁判系统信息并转换进入决策树 -->
+<!-- 哨兵机器人状态检查节点 -->
     <Condition ID="status_check">
         <input_port name="sentry_hp" default="0" type="int">Sentry HP</input_port>
         <input_port name="projectile_allowance_17mm" default="0" type="int">17mm Projectile Allowance</input_port>

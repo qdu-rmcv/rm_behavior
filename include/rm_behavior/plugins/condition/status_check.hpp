@@ -15,8 +15,9 @@
 #ifndef RM_BEHAVIOR__PLUGINS__CONDITION__STATUS_CHECK_HPP_
 #define RM_BEHAVIOR__PLUGINS__CONDITION__STATUS_CHECK_HPP_
 
-#include "behaviortree_cpp_v3/condition_node.h"
-#include <memory>
+#include "auto_aim_interfaces/msg/referee.hpp"
+#include "behaviortree_cpp/condition_node.h"
+#include "rclcpp/rclcpp.hpp"
 #include <string>
 
 namespace rm_behavior {

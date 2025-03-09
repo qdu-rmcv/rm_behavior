@@ -19,5 +19,4 @@ namespace rm_behavior{
 statusCheckCondition::statusCheckCondition(const std::string &name, const BT::NodeConfig &config)
 : BT::ConditionNode(name, config){}
 
-
 }

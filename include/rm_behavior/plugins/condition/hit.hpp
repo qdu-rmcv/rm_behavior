@@ -16,9 +16,8 @@
 #define RM_BEHAVIOR__LUGINS__CONDITION__HIT_HPP_
 
 #include "auto_aim_interfaces/msg/referee.hpp"
-#include "behaviortree_cpp/behavior_tree.h"
+#include "behaviortree_cpp/condition_node.h"
 #include "rclcpp/rclcpp.hpp"
-#include <memory>
 #include <string>
 
 namespace rm_behavior {

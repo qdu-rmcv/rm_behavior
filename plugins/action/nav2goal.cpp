@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rm_behavior/plugins/action/pub_nav2_goal.hpp"
+#include "rm_behavior/plugins/action/nav2goal.hpp"
 
 #include "rm_behavior/custom_types.hpp"
 

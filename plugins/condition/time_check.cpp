@@ -43,6 +43,4 @@ BT::NodeStatus timeCheckCondition::tick()
     return BT::NodeStatus::FAILURE;
   }
 }
-
-
 }
