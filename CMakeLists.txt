@@ -40,19 +40,19 @@ ament_auto_add_executable(rm_behavior src/rm_behavior.cpp)
 # ament_auto_add_library(hp_check SHARED plugins/condition/hp_check.cpp)
 # list(APPEND plugin_libs hp_check)
 
-###### rfid 数据判断 ######
+# ###### rfid 数据判断 ######
 # ament_auto_add_library(rfid SHARED plugins/condition/rfid.cpp)
 # list(APPEND plugin_libs rfid)
 
-###### 哨兵状态判断 ######
-ament_auto_add_library(status_check SHARED plugins/condition/status_check.cpp)
-list(APPEND plugin_libs status_check)
+# ###### 哨兵状态判断 ######
+# ament_auto_add_library(status_check SHARED plugins/condition/status_check.cpp)
+# list(APPEND plugin_libs status_check)
 
 # ###### 比赛时间判断 ######
 # ament_auto_add_library(time_check SHARED plugins/condition/time_check.cpp)
 # list(APPEND plugin_libs time_check)
 
-###### 追踪判断 ######
+# ###### 追踪判断 ######
 # ament_auto_add_library(tracking SHARED plugins/condition/tracking.cpp)
 # list(APPEND plugin_libs tracking)
 

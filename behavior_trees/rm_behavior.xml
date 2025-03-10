@@ -54,14 +54,11 @@
     </Condition>
 
 <!-- 先按照陈佬的 topic 格式进行广播，ul 后再尝试 action 方式更新 -->
-    <Condition ID="Nav2goal">
-     <input_port name="goal"
-                  default="0;0;0"
-                  type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Expected goal pose that send to nav2. Fill with format `x;y;yaw`</input_port>
-      <input_port name="topic_name"
-                  default="__default__placeholder__"
-                  type="std::string">Topic name</input_port>
-    </Condition>
+<Action ID="Nav2Goal">
+    <input_port name="goal" default="0;0;0" type="geometry_msgs::msg::PoseStamped">目标位置坐标(x;y;yaw)或(x;y;z;qx;qy;qz;qw)</input_port>
+    <input_port name="server_name" default="navigate_to_pose" type="std::string">导航服务名称</input_port>
+    <input_port name="server_timeout" default="10" type="double"></input_port>
+</Action>
 
 <!-- tracker 后追踪节点,后续更新 -->
     <Condition ID="DeteckedTrackere">
