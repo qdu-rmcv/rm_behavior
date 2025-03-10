@@ -44,9 +44,9 @@ ament_auto_add_executable(rm_behavior src/rm_behavior.cpp)
 # ament_auto_add_library(rfid SHARED plugins/condition/rfid.cpp)
 # list(APPEND plugin_libs rfid)
 
-# ###### 哨兵状态判断 ######
-# ament_auto_add_library(status_check SHARED plugins/condition/status_check.cpp)
-# list(APPEND plugin_libs status_check)
+###### 哨兵状态判断 ######
+ament_auto_add_library(status_check SHARED src/plugins/condition/status_check.cpp)
+list(APPEND plugin_libs status_check)
 
 # ###### 比赛时间判断 ######
 # ament_auto_add_library(time_check SHARED plugins/condition/time_check.cpp)

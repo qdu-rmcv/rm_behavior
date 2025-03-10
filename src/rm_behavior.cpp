@@ -25,10 +25,16 @@ namespace rm_behavior {
 RMBehavior::RMBehavior(const rclcpp::NodeOptions& options)
 : TreeExecutionServer(options)
 {
+  // 声明参数
+  node()->declare_parameter("bt_xml_dirs", 
+    std::vector<std::string>{"/home/jquark/rm/demo_behavior/src/rm_behavior/behavior_trees"});
  
   // 创建裁判系统消息订阅器
   referee_sub_ = node()->create_subscription<auto_aim_interfaces::msg::Referee>(
     "referee", 10, [this](const auto_aim_interfaces::msg::Referee::SharedPtr msg) {
+      // 在收到数据后打印哨兵血量信息
+      RCLCPP_INFO(node()->get_logger(), "received sentry_hp: %d", msg->sentry_hp);
+      
       // 将裁判系统的各项数据更新到黑板变量中
       globalBlackboard()->set("referee_event_data", static_cast<int>(msg->event_data));
       globalBlackboard()->set("referee_time", static_cast<int>(msg->time));
@@ -37,7 +43,6 @@ RMBehavior::RMBehavior(const rclcpp::NodeOptions& options)
       globalBlackboard()->set("referee_sentry_hp", static_cast<int>(msg->sentry_hp));
       globalBlackboard()->set("referee_outpost_hp", static_cast<int>(msg->outpost_hp));
       globalBlackboard()->set("referee_projectile_allowance", static_cast<int>(msg->projectile_allowance_17mm));
-
       // 记录日志
       RCLCPP_DEBUG(node()->get_logger(), "Updated referee data to blackboard");
     });

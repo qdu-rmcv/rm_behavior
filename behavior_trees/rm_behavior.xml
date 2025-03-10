@@ -4,15 +4,15 @@
     <Fallback>
         <RetryUntilSuccessful num_attempts="">
             <Sequence>
-                <status_check hp_min="150" ammo_min="0"/>
-                <Nav2goal goal="1.0;0.0;0.0" topic_name="goal_pose"/>
+                <StatusCheck/>
+                <Nav2Goal goal="1.0;0.0;0.0"/>
             </Sequence>
         </RetryUntilSuccessful>
         <Sequence>
             <Inverter>
-                <status_check hp_min="150" ammo_min="0"/>
+                <StatusCheck/>
             </Inverter>
-            <Nav2goal goal="4.0;0.0;0.0" topic_name="goal_pose"/>
+            <Nav2Goal goal="4.0;0.0;0.0"/>
         </Sequence>
     </Fallback>
 </BehaviorTree>
@@ -23,9 +23,9 @@
 <TreeNodesModel>
 
 <!-- 哨兵机器人状态检查节点 -->
-    <Condition ID="status_check">
-        <input_port name="hp_min" default="150" type="uint16_t">哨兵血量最小允许值</input_port>
-        <input_port name="ammo_min" default="0" type="uint16_t">哨兵弹丸量检测值</input_port>
+    <Condition ID="StatusCheck">
+        <input_port name="sentry_hp" default="0" type="int">哨兵血量</input_port>
+        <input_port name="projectile_allowance" default="0" type="int">哨兵弹药量</input_port>
     </Condition>
 
     <!-- rfid 判断节点 -->
@@ -55,7 +55,7 @@
 
 <!-- 先按照陈佬的 topic 格式进行广播，ul 后再尝试 action 方式更新 -->
 <Action ID="Nav2Goal">
-    <input_port name="goal" default="0;0;0" type="geometry_msgs::msg::PoseStamped">目标位置坐标(x;y;yaw)或(x;y;z;qx;qy;qz;qw)</input_port>
+    <input_port name="goal" default="0;0;0" type="geometry_msgs::msg::PoseStamped">目标位置坐标(x;y;yaw)</input_port>
     <input_port name="server_name" default="navigate_to_pose" type="std::string">导航服务名称</input_port>
     <input_port name="server_timeout" default="10" type="double"></input_port>
 </Action>
