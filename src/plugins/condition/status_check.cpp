@@ -38,13 +38,19 @@ BT::NodeStatus StatusCheckCondition::tick()
     return BT::NodeStatus::FAILURE;
   }
   
+  // 增加INFO级别的日志，确保在终端中显示
+  RCLCPP_INFO(logger_, "[StatusCheck] 状态检查: 哨兵血量=%d, 弹药量=%d", 
+              sentry_hp, projectile_allowance);
+  
   // 当哨兵HP和弹药量均小于等于100时返回FAILURE
   if (sentry_hp <= 100 && projectile_allowance <= 0) {
-    RCLCPP_WARN(logger_, "Critical status: HP=%d, Ammo=%d", sentry_hp, projectile_allowance);
+    RCLCPP_WARN(logger_, "[StatusCheck] 状态危急: 血量=%d, 弹药=%d -> 返回FAILURE", 
+                sentry_hp, projectile_allowance);
     return BT::NodeStatus::FAILURE;
   }
   
-  RCLCPP_DEBUG(logger_, "Status check passed: HP=%d, Ammo=%d", sentry_hp, projectile_allowance);
+  RCLCPP_INFO(logger_, "[StatusCheck] 状态良好: 血量=%d, 弹药=%d -> 返回SUCCESS", 
+              sentry_hp, projectile_allowance);
   return BT::NodeStatus::SUCCESS;
 }
 

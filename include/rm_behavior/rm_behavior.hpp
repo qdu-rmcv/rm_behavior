@@ -15,10 +15,11 @@
 #ifndef RM_BEHAVIOR_HPP_
 #define RM_BEHAVIOR_HPP_
 
-#include <behaviortree_ros2/tree_execution_server.hpp>
-#include <behaviortree_cpp/loggers/bt_cout_logger.h>
 #include "auto_aim_interfaces/msg/referee.hpp"
+#include "behaviortree_cpp/bt_factory.h"
 #include "rclcpp/rclcpp.hpp"
+#include <behaviortree_cpp/loggers/bt_cout_logger.h>
+#include <behaviortree_ros2/tree_execution_server.hpp>
 
 namespace rm_behavior {
 
@@ -26,7 +27,6 @@ class RMBehavior : public BT::TreeExecutionServer
 {
 public:
   explicit RMBehavior(const rclcpp::NodeOptions& options);
-
 protected:
   void onTreeCreated(BT::Tree& tree) override;
   std::optional<std::string> onTreeExecutionCompleted(BT::NodeStatus status, bool was_cancelled) override;

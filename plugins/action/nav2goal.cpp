@@ -14,25 +14,37 @@ namespace rm_behavior {
     goal.pose.header.frame_id = "map";
     goal.pose.header.stamp = now();
     goal.pose.pose = receive_goal->pose;
+    
+    // 添加详细的目标点位日志
+    RCLCPP_INFO(logger(), "[Nav2Goal] 导航目标点设置: x=%.2f, y=%.2f, z=%.2f, 方向四元数=(%.2f, %.2f, %.2f, %.2f)",
+                receive_goal->pose.position.x,
+                receive_goal->pose.position.y,
+                receive_goal->pose.position.z,
+                receive_goal->pose.orientation.x,
+                receive_goal->pose.orientation.y,
+                receive_goal->pose.orientation.z,
+                receive_goal->pose.orientation.w);
+    
     return true;
   }
 
+//在命令行答应行为树信息
   BT::NodeStatus Nav2GoalAction::onResultReceived(const WrappedResult &wr) {
     switch (wr.code) {
     case rclcpp_action::ResultCode::SUCCEEDED:
-      RCLCPP_INFO(logger(), "Navigation succeeded!");
+      RCLCPP_INFO(logger(), "[Nav2Goal] 导航成功完成！");
       return BT::NodeStatus::SUCCESS;
 
     case rclcpp_action::ResultCode::ABORTED:
-      RCLCPP_ERROR(logger(), "Navigation aborted by server");
+      RCLCPP_ERROR(logger(), "[Nav2Goal] 导航被服务器中止");
       return BT::NodeStatus::FAILURE;
 
     case rclcpp_action::ResultCode::CANCELED:
-      RCLCPP_WARN(logger(), "Navigation canceled");
+      RCLCPP_WARN(logger(), "[Nav2Goal] 导航被取消");
       return BT::NodeStatus::FAILURE;
 
     default:
-      RCLCPP_ERROR(logger(), "Unknown navigation result code: %d",
+      RCLCPP_ERROR(logger(), "[Nav2Goal] 未知的导航结果代码: %d",
                    static_cast<int>(wr.code));
       return BT::NodeStatus::FAILURE;
     }
@@ -41,8 +53,8 @@ namespace rm_behavior {
   BT::NodeStatus Nav2GoalAction::onFeedback(
       const std::shared_ptr<const nav2_msgs::action::NavigateToPose::Feedback>
           feedback) {
-    RCLCPP_DEBUG(logger(), "Distance remaining: %f",
-                 feedback->distance_remaining);
+    RCLCPP_INFO(logger(), "[Nav2Goal] 导航进行中: 剩余距离 = %.2f 米",
+               feedback->distance_remaining);
     return BT::NodeStatus::RUNNING;
   }
 

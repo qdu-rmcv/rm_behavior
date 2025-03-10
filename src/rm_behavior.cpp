@@ -73,16 +73,19 @@ std::optional<std::string> RMBehavior::onTreeExecutionCompleted(BT::NodeStatus s
 
 } // namespace rm_behavior
 
-int main(int argc, char *argv[]) {
+int main(int argc, char * argv[])
+{
   rclcpp::init(argc, argv);
 
   rclcpp::NodeOptions options;
-  auto rm_behavior = std::make_shared<rm_behavior::RMBehavior>(options);
+  auto action_server = std::make_shared<rm_behavior::RMBehavior>(options);
+
+  RCLCPP_INFO(action_server->node()->get_logger(), "Starting RMBehavior Server");
+
   rclcpp::executors::MultiThreadedExecutor exec(
     rclcpp::ExecutorOptions(), 0, false, std::chrono::milliseconds(250));
-  exec.add_node(rm_behavior->node());
+  exec.add_node(action_server->node());
   exec.spin();
-  exec.remove_node(rm_behavior->node());
 
   rclcpp::shutdown();
   return 0;
