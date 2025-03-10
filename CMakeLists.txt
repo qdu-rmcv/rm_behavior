@@ -57,7 +57,7 @@ list(APPEND plugin_libs status_check)
 # list(APPEND plugin_libs tracking)
 
 ####### Actions #######
-ament_auto_add_library(nav2goal SHARED plugins/action/nav2goal.cpp)
+ament_auto_add_library(nav2goal SHARED src/plugins/action/nav2goal.cpp)
 list(APPEND plugin_libs nav2goal)
 
 foreach(bt_plugin ${plugin_libs})
