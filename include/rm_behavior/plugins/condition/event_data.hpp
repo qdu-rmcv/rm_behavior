@@ -23,7 +23,7 @@
 
 namespace rm_behavior {
 
-class eventDataCondition : public BT::ConditionNode {
+class eventDataCondition : public BT::SimpleConditionNode {
 
 public:
 
@@ -36,7 +36,6 @@ private:
   BT::NodeStatus EventDataCheck();
 
   rclcpp::Logger logger_ = rclcpp::get_logger("EventData");
-
 };
 
 } // namespace rm_behavior

@@ -24,7 +24,7 @@
 
 namespace rm_behavior {
 
-class trackingCondition : public BT::ConditionNode {
+class trackingCondition : public BT::SimpleConditionNode {
 
 public:
 

@@ -17,12 +17,13 @@
 
 #include "auto_aim_interfaces/msg/referee.hpp"
 #include "behaviortree_cpp/condition_node.h"
+#include "behaviortree_cpp/bt_factory.h"
 #include "rclcpp/rclcpp.hpp"
 #include <string>
 
 namespace rm_behavior {
 
-class statusCheckCondition : public BT::ConditionNode {
+class statusCheckCondition : public BT::SimpleConditionNode {
 
 public:
 

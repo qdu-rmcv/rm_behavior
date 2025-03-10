@@ -22,7 +22,7 @@
 
 namespace rm_behavior {
 
-class rfidCondition : public BT::ConditionNode {
+class rfidCondition : public BT::SimpleConditionNode {
 
 public:
 
@@ -35,7 +35,6 @@ private:
   BT::NodeStatus rfidCondition();
 
   rclcpp::Logger logger_ = rclcpp::get_logger("rfid");
-
 };
 
 } // namespace rm_behavior

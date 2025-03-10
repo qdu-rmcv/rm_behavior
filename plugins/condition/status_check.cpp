@@ -20,28 +20,19 @@ namespace rm_behavior
 {
 
 statusCheckCondition::statusCheckCondition(const std::string &name, const BT::NodeConfig &config)
-: BT::ConditionNode(name, config)
+: BT::SimpleConditionNode(name, std::bind(&statusCheckCondition::statusCheck, this), config)
 {
 }
 
-BT::PortsList statusCheckCondition::providedPorts()
-{
-    return { 
-        BT::InputPort<uint16_t>("sentry_hp"), 
-        BT::InputPort<uint16_t>("hp_min", 150, "Minimum HP threshold"),
-        BT::InputPort<uint16_t>("projectile_allowance"),
-        BT::InputPort<uint16_t>("ammo_min", 10, "Minimum ammunition threshold")
-    };
-}
-
-BT::NodeStatus statusCheckCondition::tick()
+BT::NodeStatus statusCheckCondition::statusCheck()
 {
     uint16_t sentry_hp;
-    uint16_t projectile_allowance;
+    uint16_t projectile_allowance_17mm;  // 注意这里变量名保持了一致
     uint16_t hp_min;
     uint16_t ammo_min;
 
-    if (!getInput("sentry_hp", sentry_hp) || !getInput("projectile_allowance_17mm", projectile_allowance_17mm))
+    if (!getInput("sentry_hp", sentry_hp) || 
+        !getInput("projectile_allowance_17mm", projectile_allowance_17mm))
     {
         RCLCPP_ERROR(rclcpp::get_logger("status_check"), "Missing required input ports");
         return BT::NodeStatus::FAILURE;
@@ -52,9 +43,18 @@ BT::NodeStatus statusCheckCondition::tick()
     getInput("ammo_min", ammo_min);
 
     const bool is_hp_ok = (sentry_hp >= hp_min);
-    const bool is_ammo_ok = (projectile_allowance >= ammo_min);
+    const bool is_ammo_ok = (projectile_allowance_17mm >= ammo_min);  // 修正了变量名
 
     return (is_hp_ok && is_ammo_ok) ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
+}
+
+BT::PortsList statusCheckCondition::providedPorts()
+{
+  return {
+      BT::InputPort<uint16_t>("sentry_hp"),
+      BT::InputPort<uint16_t>("hp_min", 150,"Minimum HP. NOTE: Sentry init/max HP is 400"),
+      BT::InputPort<uint16_t>("projectile_allowance_17mm"),
+      BT::InputPort<uint16_t>("ammo_min", 10, "Minimum ammunition threshold")};
 }
 
 }  // namespace rm_behavior

@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
-    <BehaviorTree ID="rm_behavior" description="rmul_behavior">
-    <Blackboard
-         central_buff="{'header':{'frame_id':'map'}, 'pose':{'position':{'x': 1.0, 'y': 0.0, 'z': 0.0}, 'orientation':{'x': 0, 'y': 0, 'z': 0, 'w': 0}}}"
-         supply_zone="{'header':{'frame_id':'map'}, 'pose':{'position':{'x':4.0, 'y': 0.0, 'z': 0.0}, 'orientation':{'x': 0, 'y': 0, 'z': 0, 'w': 0}}}">
-    </Blackboard>
-    <condition ID="status_check" name="status_check" />
-    
-
-
-
-    </BehaviorTree>
+<BehaviorTree ID="rm_behavior">
+    <Fallback>
+        <RetryUntilSuccessful num_attempts="">
+            <Sequence>
+                <status_check hp_min="150" ammo_min="0"/>
+                <Nav2goal goal="1.0;0.0;0.0" topic_name="goal_pose"/>
+            </Sequence>
+        </RetryUntilSuccessful>
+        <Sequence>
+            <Inverter>
+                <status_check hp_min="150" ammo_min="0"/>
+            </Inverter>
+            <Nav2goal goal="4.0;0.0;0.0" topic_name="goal_pose"/>
+        </Sequence>
+    </Fallback>
+</BehaviorTree>
 </root>
 
 
@@ -19,9 +24,8 @@
 
 <!-- 哨兵机器人状态检查节点 -->
     <Condition ID="status_check">
-        <input_port name="sentry_hp" default="0" type="int">Sentry HP</input_port>
-        <input_port name="projectile_allowance_17mm" default="0" type="int">17mm Projectile Allowance</input_port>
-        <output_port name="status_ok" default="0" type="bool">Status OK</output_port>
+        <input_port name="hp_min" default="150" type="uint16_t">哨兵血量最小允许值</input_port>
+        <input_port name="ammo_min" default="0" type="uint16_t">哨兵弹丸量检测值</input_port>
     </Condition>
 
     <!-- rfid 判断节点 -->
@@ -30,7 +34,7 @@
         <output_port name="center_buff_detected" default="0">central_buff_detected</output_port>
         <output_port name="supply_zone_detected" default="0">supply_zone_detected</output_port>
     </Condition>
-    
+
     <!-- 前哨和基地血量判断节点 -->
     <Condition ID="hp_check">
         <input_port name="hp" default="0" type="int">HP</input_port>
@@ -48,8 +52,6 @@
         <input_port name="time" default="0" type="int">Time</input_port>
         <output_port name="time_ok" default="0" type="bool">Time OK</output_port>
     </Condition>
-
-
 
 <!-- 先按照陈佬的 topic 格式进行广播，ul 后再尝试 action 方式更新 -->
     <Condition ID="Nav2goal">
