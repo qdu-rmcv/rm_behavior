@@ -1,0 +1,12 @@
+<root BTCPP_format="4">
+    <TreeNodesModel>
+        <Action ID="Nav2Goal">
+            <input_port name="goal" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;" default="0;0;0">Expected goal pose that send to nav2. Fill with format `x;y;yaw`</input_port>
+            <input_port name="action_name" type="std::string" default="">Action server name</input_port>
+        </Action>
+        <Condition ID="StatusCheck">
+            <input_port name="projectile_allowance" type="int" default="{@referee_projectile_allowance}">Projectile allowance from blackboard</input_port>
+            <input_port name="sentry_hp" type="int" default="{@referee_sentry_hp}">Sentry health points from blackboard</input_port>
+        </Condition>
+    </TreeNodesModel>
+</root>

@@ -24,7 +24,16 @@ ament_auto_find_build_dependencies()
 ## Build ##
 ###########
 
-ament_auto_add_executable(rm_behavior src/rm_behavior.cpp)
+ament_auto_add_executable(rm_behavior_server src/rm_behavior_server.cpp)
+
+ament_auto_add_library(action_client SHARED
+  src/rm_behavior_client.cpp
+)
+
+rclcpp_components_register_node(action_client
+  PLUGIN rm_behavior::BehaviorClient
+  EXECUTABLE rm_behavior_client
+)
 
 ####### Conditions #######
 
@@ -93,4 +102,5 @@ ament_auto_package(
   INSTALL_TO_SHARE
   behavior_trees
   launch
+  params
 )

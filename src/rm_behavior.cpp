@@ -92,6 +92,24 @@ int main(int argc, char * argv[])
     rclcpp::ExecutorOptions(), 0, false, std::chrono::milliseconds(250));
   exec.add_node(action_server->node());
   exec.spin();
+  exec.remove_node(action_server->node());  // 确保清理节点
+
+  // 为Groot2编辑器生成已注册节点的模型
+  // 这可以自动生成，不需要手动编写
+  std::string xml_models = BT::writeTreeNodesModelXML(action_server->factory());
+
+  // 将XML模型保存到文件
+  std::filesystem::path output_path = "/home/jquark/rm/demo_behavior/src/rm_behavior/behavior_trees/models.xml";
+  RCLCPP_INFO(action_server->node()->get_logger(), "Saving behavior tree models to %s", output_path.c_str());
+  
+  std::ofstream file(output_path);
+  if (file.is_open()) {
+    file << xml_models;
+    file.close();
+    RCLCPP_INFO(action_server->node()->get_logger(), "Models saved successfully");
+  } else {
+    RCLCPP_ERROR(action_server->node()->get_logger(), "Failed to open file for writing models");
+  }
 
   rclcpp::shutdown();
   return 0;
