@@ -22,4 +22,4 @@ rm_behavior_server:
 rm_behavior_client:
   ros__parameters:
     use_sim_time: true
-    target_tree: rm_behavior       # 默认启动的行为树
+    target_tree: demo       # 默认启动的行为树

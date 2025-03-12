@@ -1,7 +1,8 @@
 <root BTCPP_format="4">
     <TreeNodesModel>
         <Action ID="Nav2Goal">
-            <input_port name="goal" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;" default="0;0;0">Expected goal pose that send to nav2. Fill with format `x;y;yaw`</input_port>
+            <input_port name="goal" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;" default="0;0;0">导航目标位置，格式为 `x;y;yaw`</input_port>
+            <input_port name="action_client" type="std::string" default="navigate_to_pose">导航动作客户端名称</input_port>
             <input_port name="action_name" type="std::string" default="">Action server name</input_port>
         </Action>
         <Condition ID="StatusCheck">

@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
+
+<BehaviorTree ID="demo">
+    <Nav2Goal goal="1.0;0.0;0.0" action_client="navigate_to_pose"/>
+</BehaviorTree>
+
 <BehaviorTree ID="rm_behavior">
     <Fallback>
         <RetryUntilSuccessful num_attempts="3">
             <Sequence>
                 <StatusCheck/>
-                <Nav2Goal goal="1.0;0.0;0.0"/>
+                <Nav2Goal goal="1.0;0.0;0.0" action_client="navigate_to_pose"/>
             </Sequence>
         </RetryUntilSuccessful>
         <Sequence>
             <Inverter>
                 <StatusCheck/>
             </Inverter>
-            <Nav2Goal goal="4.0;0.0;0.0"/>
+            <Nav2Goal goal="4.0;0.0;0.0" action_client="navigate_to_pose"/>
         </Sequence>
     </Fallback>
 </BehaviorTree>
+
 </root>
 
 
@@ -53,11 +59,10 @@
         <output_port name="time_ok" default="0" type="bool">Time OK</output_port>
     </Condition>
 
-<!-- 先按照陈佬的 topic 格式进行广播，ul 后再尝试 action 方式更新 -->
+<!-- nav2goal -->
 <Action ID="Nav2Goal">
     <input_port name="goal" default="0;0;0" type="geometry_msgs::msg::PoseStamped">目标位置坐标(x;y;yaw)</input_port>
-    <input_port name="server_name" default="navigate_to_pose" type="std::string">导航服务名称</input_port>
-    <input_port name="server_timeout" default="10" type="double"></input_port>
+    <input_port name="action_client" default="navigate_to_pose" type="std::string">导航动作客户端名称</input_port>
 </Action>
 
 <!-- tracker 后追踪节点,后续更新 -->
