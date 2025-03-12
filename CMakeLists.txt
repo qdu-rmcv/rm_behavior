@@ -49,9 +49,9 @@ rclcpp_components_register_node(action_client
 # ament_auto_add_library(hp_check SHARED src/plugins/condition/hp_check.cpp)
 # list(APPEND plugin_libs hp_check)
 
-# ###### rfid 数据判断 ######
-# ament_auto_add_library(rfid SHARED src/plugins/condition/rfid.cpp)
-# list(APPEND plugin_libs rfid)
+###### rfid_check ######
+ament_auto_add_library(rfid_check SHARED src/plugins/condition/rfid_check.cpp)
+list(APPEND plugin_libs rfid_check)
 
 ###### 哨兵状态判断 ######
 ament_auto_add_library(status_check SHARED src/plugins/condition/status_check.cpp)

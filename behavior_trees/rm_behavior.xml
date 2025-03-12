@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
 
+
+
 <BehaviorTree ID="rm_behavior_demo">
     <WhileDoElse>
         <StatusCheck/>
@@ -11,7 +13,7 @@
 
 <BehaviorTree ID="rm_behavior">
     <Sequence>
-        <TimeCheck/>
+        <TimeChec</BehaviorTree>k/>
         <WhileDoElse>
             <StatusCheck/>
                 <TopicNav2Goal goal="1.0;0.0;0.0" topic_name="/goal_pose"/>
@@ -32,11 +34,14 @@
         <input_port name="projectile_allowance" default="0" type="int">哨兵弹药量</input_port>
     </Condition>
 
-    <!-- rfid 判断节点 -->
-    <Condition ID="rfid">
+    <!-- time_check -->
+    <Condition ID="TimeCheck">
+        <input_port name="remaining_time" default="{time}" type="int">裁判系统剩余时间</input_port>
+    </Condition>
+
+    <!-- rfid_check -->
+    <Condition ID="RFIDCheck">
         <input_port name="rfid" default="0" type="int">RFID</input_port>
-        <output_port name="center_buff_detected" default="0">central_buff_detected</output_port>
-        <output_port name="supply_zone_detected" default="0">supply_zone_detected</output_port>
     </Condition>
 
     <!-- 前哨和基地血量判断节点 -->
@@ -51,10 +56,7 @@
         <output_port name="event_data" default="0" type="int">Event Data</output_port>
     </Condition>
 
-<!-- time_check -->
-    <Condition ID="TimeCheck">
-        <input_port name="remaining_time" default="{time}" type="int">裁判系统剩余时间</input_port>
-    </Condition>
+
 
 <!-- nav2goal -->
 <Action ID="Nav2Goal">

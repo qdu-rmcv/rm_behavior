@@ -42,7 +42,7 @@ BT::NodeStatus StatusCheckCondition::tick()
   
   // 当哨兵HP和弹药量均小于等于100时返回FAILURE
   if (sentry_hp <= 100 || projectile_allowance <= 0) {
-    RCLCPP_WARN(logger_, "[StatusCheck] 状态危急: 血量=%d, 弹药=%d -> 返回FAILURE", 
+    RCLCPP_WARN(logger_, "[StatusCheck] 状态异常: 血量=%d, 弹药=%d -> 返回FAILURE", 
                 sentry_hp, projectile_allowance);
     return BT::NodeStatus::FAILURE;
   }
@@ -55,12 +55,10 @@ BT::NodeStatus StatusCheckCondition::tick()
 BT::PortsList StatusCheckCondition::providedPorts()
 {
   return {
-    BT::InputPort<int>("sentry_hp", 
-                      "{@referee_sentry_hp}", 
-                      "Sentry health points from blackboard"),
-    BT::InputPort<int>("projectile_allowance", 
-                      "{@referee_projectile_allowance}", 
-                      "Projectile allowance from blackboard")
+    BT::InputPort<int>("sentry_hp", "{@referee_sentry_hp}", 
+                      "哨兵生命值"),
+    BT::InputPort<int>("projectile_allowance", "{@referee_projectile_allowance}", 
+                      "裁判系统允许发单量")
   };
 }
 
