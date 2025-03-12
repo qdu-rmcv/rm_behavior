@@ -17,12 +17,12 @@
 
 namespace rm_behavior {
 
-Nav2GoalAction::Nav2GoalAction(const std::string &name,
-                             const BT::NodeConfig &conf,
-                             const BT::RosNodeParams &params)
-: RosActionNode<nav2_msgs::action::NavigateToPose>(name, conf, params)
-{
-}
+// Nav2GoalAction::Nav2GoalAction(const std::string &name,
+//                              const BT::NodeConfig &conf,
+//                              const BT::RosNodeParams &params)
+// : RosActionNode<nav2_msgs::action::NavigateToPose>(name, conf, params)
+// {
+// }
 
 bool Nav2GoalAction::setGoal(nav2_msgs::action::NavigateToPose::Goal & goal)
 {

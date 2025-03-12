@@ -30,7 +30,19 @@ class Nav2GoalAction
 
 public:
   Nav2GoalAction(const std::string &name, const BT::NodeConfig &conf,
-             const BT::RosNodeParams &params);
+             const BT::RosNodeParams &params)
+    : BT::RosActionNode<nav2_msgs::action::NavigateToPose>(name, conf, 
+      [&]() {
+        auto modified_params = params;
+        // 设置默认动作服务器名称
+        if (modified_params.default_port_value.empty()) {
+          modified_params.default_port_value = "navigate_to_pose";
+        }
+        modified_params.server_timeout=std::chrono::seconds(500);
+        return modified_params;
+      }())
+  {
+  }
 
   static BT::PortsList providedPorts();
 
