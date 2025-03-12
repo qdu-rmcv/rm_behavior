@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
 
+<BehaviorTree ID="rm_behavior_demo">
+    <WhileDoElse>
+        <StatusCheck/>
+        <TopicNav2Goal goal="1.0;0.0;0.0" topic_name="/goal_pose"/>
+        <TopicNav2Goal goal="4.0;0.0;0.0" topic_name="/goal_pose"/>
+    </WhileDoElse>
+</BehaviorTree>
+
 <BehaviorTree ID="rm_behavior">
-    <Fallback>
-        <RetryUntilSuccessful num_attempts="3">
-            <Sequence>
-                <StatusCheck/>
-                <Nav2Goal goal="1.0;0.0;0.0" action_client="navigate_to_pose"/>
-            </Sequence>
-        </RetryUntilSuccessful>
-        <Sequence>
-            <Inverter>
-                <StatusCheck/>
-            </Inverter>
-            <Nav2Goal goal="4.0;0.0;0.0" action_client="navigate_to_pose"/>
-        </Sequence>
-    </Fallback>
+    <Sequence>
+        <TimeCheck/>
+        <WhileDoElse>
+            <StatusCheck/>
+                <TopicNav2Goal goal="1.0;0.0;0.0" topic_name="/goal_pose"/>
+                <TopicNav2Goal goal="4.0;0.0;0.0" topic_name="/goal_pose"/>
+        </WhileDoElse>
+    </Sequence>
 </BehaviorTree>
 
 </root>
@@ -49,16 +51,21 @@
         <output_port name="event_data" default="0" type="int">Event Data</output_port>
     </Condition>
 
-    <!-- 时间检测节点 -->
-    <Condition ID="time_check">
-        <input_port name="time" default="0" type="int">Time</input_port>
-        <output_port name="time_ok" default="0" type="bool">Time OK</output_port>
+<!-- time_check -->
+    <Condition ID="TimeCheck">
+        <input_port name="remaining_time" default="{time}" type="int">裁判系统剩余时间</input_port>
     </Condition>
 
 <!-- nav2goal -->
 <Action ID="Nav2Goal">
     <input_port name="goal" default="0;0;0" type="geometry_msgs::msg::PoseStamped">目标位置坐标(x;y;yaw)</input_port>
     <input_port name="action_client" default="navigate_to_pose" type="std::string">导航动作客户端名称</input_port>
+</Action>
+
+<!-- topic_nav2goal -->
+<Action ID="TopicNav2Goal">
+    <input_port name="goal" default="0;0;0" type="geometry_msgs::msg::PoseStamped">目标位置坐标(x;y;yaw)</input_port>
+    <input_port name="topic_name" default="/goal_pose" type="std::string">发布导航目标的话题名称</input_port>
 </Action>
 
 <!-- tracker 后追踪节点,后续更新 -->

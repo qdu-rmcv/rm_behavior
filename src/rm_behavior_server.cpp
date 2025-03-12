@@ -1,4 +1,5 @@
-// Copyright 2025 RM Team
+// Copyright 2025 Jquark
+// Copyright 2025 Lihan Chen
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -65,14 +66,14 @@ BehaviorServer::BehaviorServer(const rclcpp::NodeOptions & options)
     });
 
   // 保留其他非裁判系统相关订阅
-  auto detector_qos = rclcpp::SensorDataQoS();
-  subscribe<auto_aim_interfaces::msg::Armors>("detector/armors", "detector_armors", detector_qos);
-  auto tracker_qos = rclcpp::SensorDataQoS();
-  subscribe<auto_aim_interfaces::msg::Target>("tracker/target", "tracker_target", tracker_qos);
+  // auto detector_qos = rclcpp::SensorDataQoS();
+  // subscribe<auto_aim_interfaces::msg::Armors>("detector/armors", "detector_armors", detector_qos);
+  // auto tracker_qos = rclcpp::SensorDataQoS();
+  // subscribe<auto_aim_interfaces::msg::Target>("tracker/target", "tracker_target", tracker_qos);
 
-  auto costmap_qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable();
-  subscribe<nav_msgs::msg::OccupancyGrid>(
-    "global_costmap/costmap", "nav_globalCostmap", costmap_qos);
+  // auto costmap_qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable();
+  // subscribe<nav_msgs::msg::OccupancyGrid>(
+  //   "global_costmap/costmap", "nav_globalCostmap", costmap_qos);
 }
 
 

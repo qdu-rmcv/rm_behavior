@@ -1,4 +1,5 @@
-// Copyright 2025 RM Team
+// Copyright 2025 Jquark
+// Copyright 2025 Lihan Chen
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -61,17 +62,22 @@ void BehaviorClient::resultCallback(
   switch (result.code) {
     case rclcpp_action::ResultCode::SUCCEEDED:
       RCLCPP_INFO(get_logger(), "Goal succeeded: %s", result.result->return_message.c_str());
+      // 成功后可以选择是否立即重新发送目标
+      // sendGoal();  // 如果想要连续执行
+      timer_->reset(); // 或者等待计时器周期
       break; 
     case rclcpp_action::ResultCode::CANCELED:
       RCLCPP_WARN(get_logger(), "Goal was canceled.");
+      sendGoal();  // 取消后立即重试
       break;
     case rclcpp_action::ResultCode::ABORTED:
       RCLCPP_ERROR(get_logger(), "Goal failed: %s", result.result->return_message.c_str());
+      sendGoal();  // 失败后立即重试，而不是等待计时器
       break;
     case rclcpp_action::ResultCode::UNKNOWN:
+      sendGoal();  // 未知状态也立即重试
       break;
   }
-  timer_->reset();
 }
 
 void BehaviorClient::feedbackCallback(

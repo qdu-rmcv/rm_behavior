@@ -38,36 +38,39 @@ rclcpp_components_register_node(action_client
 ####### Conditions #######
 
 ###### 场地关键数据判断 ######
-# ament_auto_add_library(event_data SHARED plugins/condition/event_data.cpp)
+# ament_auto_add_library(event_data SHARED src/plugins/condition/event_data.cpp)
 # list(APPEND plugin_libs event_data)
 
 ###### 被击打判断 ######
-# ament_auto_add_library(hit SHARED plugins/condition/hit.cpp)
+# ament_auto_add_library(hit SHARED src/plugins/condition/hit.cpp)
 # list(APPEND plugin_libs hit)
 
 ###### 前哨战与基地血量判断 ######
-# ament_auto_add_library(hp_check SHARED plugins/condition/hp_check.cpp)
+# ament_auto_add_library(hp_check SHARED src/plugins/condition/hp_check.cpp)
 # list(APPEND plugin_libs hp_check)
 
 # ###### rfid 数据判断 ######
-# ament_auto_add_library(rfid SHARED plugins/condition/rfid.cpp)
+# ament_auto_add_library(rfid SHARED src/plugins/condition/rfid.cpp)
 # list(APPEND plugin_libs rfid)
 
 ###### 哨兵状态判断 ######
 ament_auto_add_library(status_check SHARED src/plugins/condition/status_check.cpp)
 list(APPEND plugin_libs status_check)
 
-# ###### 比赛时间判断 ######
-# ament_auto_add_library(time_check SHARED plugins/condition/time_check.cpp)
-# list(APPEND plugin_libs time_check)
+###### 比赛时间判断 ######
+ament_auto_add_library(time_check SHARED src/plugins/condition/time_check.cpp)
+list(APPEND plugin_libs time_check)
 
 # ###### 追踪判断 ######
-# ament_auto_add_library(tracking SHARED plugins/condition/tracking.cpp)
+# ament_auto_add_library(tracking SHARED src/plugins/condition/tracking.cpp)
 # list(APPEND plugin_libs tracking)
 
 ####### Actions #######
 ament_auto_add_library(nav2goal SHARED src/plugins/action/nav2goal.cpp)
 list(APPEND plugin_libs nav2goal)
+
+ament_auto_add_library(topic_nav2goal SHARED src/plugins/action/topic_nav2goal.cpp)
+list(APPEND plugin_libs topic_nav2goal)
 
 foreach(bt_plugin ${plugin_libs})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)

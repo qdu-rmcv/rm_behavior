@@ -9,5 +9,12 @@
             <input_port name="projectile_allowance" type="int" default="{@referee_projectile_allowance}">Projectile allowance from blackboard</input_port>
             <input_port name="sentry_hp" type="int" default="{@referee_sentry_hp}">Sentry health points from blackboard</input_port>
         </Condition>
+        <Condition ID="TimeCheck">
+            <input_port name="time" type="int" default="{@referee_time}">裁判系统剩余时间</input_port>
+        </Condition>
+        <Condition ID="TopicNav2Goal">
+            <input_port name="goal" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;" default="0;0;0">Expected goal pose that send to nav2. Fill with format `x;y;yaw`</input_port>
+            <input_port name="topic_name" type="std::string" default="__default__placeholder__">Topic name</input_port>
+        </Condition>
     </TreeNodesModel>
 </root>

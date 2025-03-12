@@ -26,8 +26,7 @@ BT::NodeStatus StatusCheckCondition::tick()
 {
   int sentry_hp = 0;
   int projectile_allowance = 0;
-  
-  // 从黑板获取血量和弹药量
+
   if (!getInput("sentry_hp", sentry_hp)) {
     RCLCPP_ERROR(logger_, "Failed to get sentry_hp from blackboard");
     return BT::NodeStatus::FAILURE;
@@ -38,12 +37,11 @@ BT::NodeStatus StatusCheckCondition::tick()
     return BT::NodeStatus::FAILURE;
   }
   
-  // 增加INFO级别的日志，确保在终端中显示
   RCLCPP_INFO(logger_, "[StatusCheck] 状态检查: 哨兵血量=%d, 弹药量=%d", 
               sentry_hp, projectile_allowance);
   
   // 当哨兵HP和弹药量均小于等于100时返回FAILURE
-  if (sentry_hp <= 100 && projectile_allowance <= 0) {
+  if (sentry_hp <= 100 || projectile_allowance <= 0) {
     RCLCPP_WARN(logger_, "[StatusCheck] 状态危急: 血量=%d, 弹药=%d -> 返回FAILURE", 
                 sentry_hp, projectile_allowance);
     return BT::NodeStatus::FAILURE;
