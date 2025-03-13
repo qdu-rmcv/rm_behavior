@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
 
-
-
 <BehaviorTree ID="rm_behavior_demo">
     <WhileDoElse>
         <StatusCheck/>
@@ -13,11 +11,23 @@
 
 <BehaviorTree ID="rm_behavior">
     <Sequence>
-        <TimeChec</BehaviorTree>k/>
+        <TimeCheck/>
         <WhileDoElse>
             <StatusCheck/>
                 <TopicNav2Goal goal="1.0;0.0;0.0" topic_name="/goal_pose"/>
                 <TopicNav2Goal goal="4.0;0.0;0.0" topic_name="/goal_pose"/>
+        </WhileDoElse>
+    </Sequence>
+</BehaviorTree>
+
+<BehaviorTree ID ="rfid_check">
+    <Sequence>
+            <RFIDCheck/>
+        <TimeCheck/>
+        <WhileDoElse>
+            <StatusCheck/>
+            <TopicNav2Goal goal="1.0;0.0;0.0" topic_name="/goal_pose"/>
+            <TopicNav2Goal goal="4.0;0.0;0.0" topic_name="/goal_pose"/>
         </WhileDoElse>
     </Sequence>
 </BehaviorTree>
