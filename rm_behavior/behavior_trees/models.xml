@@ -1,0 +1,52 @@
+<root BTCPP_format="4">
+    <TreeNodesModel>
+        <Condition ID="AllyBot">
+            <input_port name="costmap_port" type="nav_msgs::msg::OccupancyGrid_&lt;std::allocator&lt;void&gt; &gt;" default="{@nav_globalCostmap}">GlobalCostmap port on blackboard</input_port>
+            <input_port name="allybot_port" type="referee_interfaces::msg::AllyBot_&lt;std::allocator&lt;void&gt; &gt;" default="{@referee_allyBot}">Ally bot information port on blackboard</input_port>
+            <input_port name="select" type="int" default="1">Robot select: 1=hero, 2=engineer, 3=standard_3, 4=standard_4</input_port>
+            <output_port name="goal" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;" default="{ally_approach_pose}">Goal pose to approach the selected ally robot</output_port>
+            <input_port name="trans_x" type="double" default="0.0">Translation in x-axis between coordinate frames</input_port>
+            <input_port name="trans_y" type="double" default="0.0">Translation in y-axis between coordinate frames</input_port>
+            <input_port name="trans_w" type="double" default="0.0">Rotation (yaw) between coordinate frames</input_port>
+            <input_port name="topic_name" type="std::string" default="__default__placeholder__">Topic name</input_port>
+        </Condition>
+        <Condition ID="AttackPose">
+            <input_port name="costmap_port" type="nav_msgs::msg::OccupancyGrid_&lt;std::allocator&lt;void&gt; &gt;" default="{@nav_globalCostmap}">GlobalCostmap port on blackboard</input_port>
+            <input_port name="tracker_port" type="auto_aim_interfaces::msg::Target_&lt;std::allocator&lt;void&gt; &gt;" default="{@tracker_target}">Vision target port on blackboard</input_port>
+            <output_port name="goal" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;" default="{attack_pose}">Expected goal pose that send to nav2. Fill with format `x;y;yaw`</output_port>
+            <input_port name="topic_name" type="std::string" default="__default__placeholder__">Topic name</input_port>
+        </Condition>
+        <Condition ID="EnemyDetected">
+            <input_port name="armor_id" type="std::vector&lt;int, std::allocator&lt;int&gt; &gt;" default="1;2;3;4;6">Expected id of armors. </input_port>
+            <input_port name="max_distance" type="float" default="8.000000">Distance to enemy target</input_port>
+            <input_port name="key_port" type="auto_aim_interfaces::msg::Armors_&lt;std::allocator&lt;void&gt; &gt;" default="{@detector_armors}">Vision detector port on blackboard</input_port>
+        </Condition>
+        <Condition ID="GameStatusCheck">
+            <input_port name="time_limit" type="int" default="4">目标状态</input_port>
+            <input_port name="game_status" type="referee_interfaces::msg::GameStatus_&lt;std::allocator&lt;void&gt; &gt;" default="{@referee_gameStatus}">裁判系统状态</input_port>
+        </Condition>
+        <Condition ID="HomeCheck">
+            <input_port name="outpost_hp_limit" type="int" default="500">前哨战血量阈值</input_port>
+            <input_port name="base_hp_limit" type="int" default="1000">基地血量阈值</input_port>
+            <input_port name="basic_hp" type="referee_interfaces::msg::BasicHp_&lt;std::allocator&lt;void&gt; &gt;" default="{@basic_hp}">哨兵基本状态信息</input_port>
+        </Condition>
+        <Action ID="Nav2Goal">
+            <input_port name="goal" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;" default="0;0;0">导航目标位置，格式为 `x;y;yaw`</input_port>
+            <input_port name="action_client" type="std::string" default="navigate_to_pose">导航动作客户端名称</input_port>
+            <input_port name="action_name" type="std::string" default="">Action server name</input_port>
+        </Action>
+        <Condition ID="RFIDCheck">
+            <input_port name="rfid_chosen" type="std::string" default="">The name of the RFID point to check</input_port>
+            <input_port name="rfid_msg" type="referee_interfaces::msg::Rfid_&lt;std::allocator&lt;void&gt; &gt;" default="{@referee_rfid}">RFID message from referee system</input_port>
+        </Condition>
+        <Condition ID="StatusCheck">
+            <input_port name="projectile_allowance_limit" type="int" default="{@projectile_allowance_limit}">允许发弹量阈值</input_port>
+            <input_port name="sentry_hp_limit" type="int" default="{@sentry_hp_limit}">哨兵血量阈值</input_port>
+            <input_port name="basic_hp" type="referee_interfaces::msg::BasicHp_&lt;std::allocator&lt;void&gt; &gt;" default="{@basic_hp}">哨兵基本状态信息</input_port>
+        </Condition>
+        <Condition ID="TopicNav2Goal">
+            <input_port name="goal" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;" default="0;0;0">Expected goal pose that send to nav2. Fill with format `x;y;yaw`</input_port>
+            <input_port name="topic_name" type="std::string" default="__default__placeholder__">Topic name</input_port>
+        </Condition>
+    </TreeNodesModel>
+</root>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4">
+    <SetBlackboard>
+        <entry key="trans_x" value="1.0" />
+        <entry key="trans_y" value="-1.0" />
+        <entry key="trans_w" value="4.0" />
+    </SetBlackboard>
+    <BehaviorTree ID="233">
+        <Sequence>
+            <GameStatusCheck game_status="{@referee_gameStatus}" time_limit="4"/>
+            <TopicNav2Goal goal="1.0;0.0;0.0" topic_name="/goal_pose"/>
+            <Sleep msec="3000"/>
+            <Selector>
+                <!-- 第一层：血量300以上进行四点随机巡逻 -->
+                <Sequence>
+                    <StatusCheck sentry_hp_limit="300" projectile_allowance_limit="20"/>
+                    <WhileDoElse>
+                        <EnemyDetected armor_id="1;2;3;4;5;7"
+                                    max_distance="8.0"
+                                    key_port="{@detector_armors}"/>
+                        <!-- 发现敌人时的追击模式 -->
+                        <Sequence>
+                            <AttackPose costmap_port="{@nav_globalCostmap}"
+                                        tracker_port="{@tracker_target}"
+                                        goal="{attack_pose}"
+                                        topic_name="debug_attack_pose"/>
+                            <TopicNav2Goal goal="{attack_pose}" topic_name="/goal_pose"/>
+                        </Sequence>
+                        <!-- 未发现敌人时的四点随机循环巡逻 -->
+                        <Sequence>
+                            <RandomSelector>
+                                <Sequence>
+                                    <TopicNav2Goal goal="2.0;1.0;0.0" topic_name="/goal_pose"/>
+                                    <Sleep msec="2000"/>
+                                </Sequence>
+                                <Sequence>
+                                    <TopicNav2Goal goal="-1.0;2.0;0.0" topic_name="/goal_pose"/>
+                                    <Sleep msec="2000"/>
+                                </Sequence>
+                                <Sequence>
+                                    <TopicNav2Goal goal="-2.0;-1.0;0.0" topic_name="/goal_pose"/>
+                                    <Sleep msec="2000"/>
+                                </Sequence>
+                                <Sequence>
+                                    <TopicNav2Goal goal="1.0;-2.0;0.0" topic_name="/goal_pose"/>
+                                    <Sleep msec="2000"/>
+                                </Sequence>
+                            </RandomSelector>
+                        </Sequence>
+                    </WhileDoElse>
+                </Sequence>
+                <!-- 第二层：血量150-300之间进行英雄追踪 -->
+                <Sequence>
+                    <StatusCheck sentry_hp_limit="150" projectile_allowance_limit="20"/>
+                    <WhileDoElse>
+                        <EnemyDetected armor_id="1;2;3;4;5;7"
+                                    max_distance="8.0"
+                                    key_port="{@detector_armors}"/>
+                        <!-- 发现敌人时的追击 -->
+                        <Sequence>
+                            <AttackPose costmap_port="{@nav_globalCostmap}"
+                                        tracker_port="{@tracker_target}"
+                                        goal="{attack_pose}"
+                                        topic_name="debug_attack_pose"/>
+                            <TopicNav2Goal goal="{attack_pose}" topic_name="/goal_pose"/>
+                        </Sequence>
+                        <!-- 未发现敌人时跟踪友方英雄 -->
+                        <Sequence>
+                            <AllyBot costmap_port="{@nav_globalCostmap}"
+                                    allybot_port="{@referee_allyBot}"
+                                    select="1"
+                                    trans_x="{trans_x}"
+                                    trans_y="{trans_y}"
+                                    trans_w="{trans_w}"
+                                    goal="{ally_approach_pose}"
+                                    topic_name="debug_ally_pose"/>
+                            <TopicNav2Goal goal="{ally_approach_pose}" topic_name="/goal_pose"/>
+                        </Sequence>
+                    </WhileDoElse>
+                </Sequence>
+                <!-- 第三层：血量低于150或弹丸低于20时回补给区 -->
+                <TopicNav2Goal goal="0.0;0.0;0.0" topic_name="/goal_pose"/>
+            </Selector>
+        </Sequence>
+    </BehaviorTree>
+</root>

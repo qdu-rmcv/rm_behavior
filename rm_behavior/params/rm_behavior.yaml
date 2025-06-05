@@ -1,0 +1,25 @@
+rm_behavior_server:
+  ros__parameters:
+    use_sim_time: true
+    action_name: rm_behavior                    # 行为树执行服务器的动作名称
+    tick_frequency: 10                          # 行为树的刷新频率（默认为100 Hz）
+    groot2_port: 1667                           # Groot2可视化工具端口（默认为1667）
+    ros_plugins_timeout: 1000                   # ROS插件的超时时间（默认为1000 ms）
+    use_cout_logger: true                       # 是否使用标准输出日志记录器
+
+    plugins:
+      - rm_behavior/bt_plugins
+
+    behavior_trees:
+      - rm_behavior/behavior_trees
+
+    # 导航相关参数
+    NavigateToPosition:
+      max_distance: 10.0                         # 最大导航距离（米）
+      timeout_seconds: 60.0                     # 导航超时时间（秒）
+
+
+rm_behavior_client:
+  ros__parameters:
+    use_sim_time: true
+    target_tree: rm_behavior      # 默认启动的行为树/hero_follow/basic

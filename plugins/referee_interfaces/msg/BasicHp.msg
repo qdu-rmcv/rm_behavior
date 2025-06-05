@@ -1,0 +1,4 @@
+uint16 sentry_hp
+uint16 base_hp
+uint16 outpost_hp
+uint16 projectile_allowance_17mm

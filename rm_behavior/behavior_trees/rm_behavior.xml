@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4">
+    <SetBlackboard>
+        <entry key="trans_x" value="-5.0" />
+        <entry key="trans_y" value="-5.0" />
+        <entry key="trans_w" value="4.0" />
+        <entry key="supply_zone" value="-2;-5;0"/>
+        <entry key="centry_height_left" value="10;-6;0"/>
+        <entry key="centry_height_right" value="12;-0.5;0"/>
+        <entry key="centry_height_red" value="9;-2;0"/>
+        <entry key="centry_height_blue" value="13;-5;0"/>
+        <entry key="homecenter" value="6;-2;0"/>
+    </SetBlackboard>
+
+    <BehaviorTree ID="rm_behavior">
+        <WhileDoElse name="main">
+            <GameStatusCheck game_status="{@referee_gameStatus}" time_limit="4"/>
+            <WhileDoElse>
+                <StatusCheck sentry_hp_limit="300" projectile_allowance_limit="20"/>
+                <Sequence>
+                    <WhileDoElse>
+                        <!-- 追击模式 -->
+                        <EnemyDetected armor_id="1;2;3;4;5;7"
+                                       max_distance="8.0"
+                                       key_port="{@detector_armors}"/>
+                        <Sequence>
+                            <AttackPose costmap_port="{@nav_globalCostmap}"
+                                        tracker_port="{@tracker_target}"
+                                        goal="{attack_pose}"
+                                        topic_name="debug_attack_pose"/>
+                            <TopicNav2Goal goal="{attack_pose}" topic_name="/goal_pose"/>
+                        </Sequence>
+                        <Repeat num_cycles="-1">
+                            <Sequence>
+                                <TopicNav2Goal goal="{centry_height_blue}" topic_name="/goal_pose"/>
+                                <Sleep msec="1000"/>
+                                <TopicNav2Goal goal="{centry_height_red}" topic_name="/goal_pose"/>
+                                <Sleep msec="1000"/>
+                            </Sequence>
+                        </Repeat>
+                    </WhileDoElse>
+                </Sequence>
+                <Sequence>
+                    <TopicNav2Goal goal="{supply_zone}" topic_name="/goal_pose"/>
+                    <Sleep msec="3000"/>
+                </Sequence>
+            </WhileDoElse>
+            <TopicNav2Goal goal="{0;0;0}" topic_name="/goal_pose"/>
+        </WhileDoElse>
+    </BehaviorTree>
+
+
+<!-- the BT executor don't require this, but Groot does -->
+    <TreeNodesModel>
+        <!-- 基地与前哨状态检查节点 -->
+        <Condition ID="HomeCheck">
+            <input_port name="basic_hp" 
+                        default="{@basic_hp}" 
+                        type="referee_interfaces::msg::BasicHp">基本状态信息</input_port>
+            <input_port name="outpost_hp_limit" default="0" type="int">前哨站血量阈值</input_port>
+            <input_port name="base_hp_limit" default="100" type="int">基地血量阈值</input_port>
+        </Condition>
+
+        <!-- 哨兵机器人状态检查节点 -->
+        <Condition ID="StatusCheck">
+            <input_port name="basic_hp" 
+                        default="{@basic_hp}" 
+                        type="referee_interfaces::msg::BasicHp">基本状态信息</input_port>
+            <input_port name="sentry_hp_limit" default="150" type="int">哨兵血量阈值</input_port>
+            <input_port name="projectile_allowance_limit" default="0" type="int">允许发单量阈值</input_port>
+        </Condition>
+
+        <!-- 比赛状态判断, 4 为比赛开始, 5 为比赛结束 -->
+        <Condition ID="GameStatusCheck">
+            <input_port name="game_status" 
+                        default="{@referee_gameStatus}" 
+                        type="referee_interfaces::msg::GameStatus">裁判系统状态</input_port>
+            <input_port name="time_limit" default="4" type="int">目标状态(相等时返回成功)</input_port>
+        </Condition>
+
+        <!-- rfid_check -->
+        <Condition ID="RFIDCheck">
+            <input_port name="rfid_msg" default="{@referee_rfid}" type="referee_interfaces::msg::Rfid">RFID message from referee system</input_port>
+            <input_port name="rfid_chosen" default="" type="std::string">The name of the RFID point to check</input_port>
+        </Condition>
+
+        <!-- 前哨和基地血量判断节点 -->
+        <Condition ID="hp_check">
+            <input_port name="hp" default="0" type="int">HP</input_port>
+            <output_port name="hp_ok" default="0" type="bool">HP OK</output_port>
+        </Condition>
+
+        <!-- 场地关键数据 -->
+        <!-- <Condition ID="event_data">
+            <input_port name="event" default="0" type="int">Event</input_port>
+            <output_port name="event_data" default="0" type="int">Event Data</output_port>
+        </Condition> -->
+
+        <!-- nav2goal -->
+        <Action ID="Nav2Goal">
+            <input_port name="goal" default="0;0;0" type="geometry_msgs::msg::PoseStamped">目标位置坐标(x;y;yaw)</input_port>
+            <input_port name="action_client" default="navigate_to_pose" type="std::string">导航动作客户端名称</input_port>
+        </Action>
+
+        <!-- topic_nav2goal -->
+        <Action ID="TopicNav2Goal">
+            <input_port name="goal" default="0;0;0" type="geometry_msgs::msg::PoseStamped">目标位置坐标(x;y;yaw)</input_port>
+            <input_port name="topic_name" default="/goal_pose" type="std::string">发布导航目标的话题名称</input_port>
+        </Action>
+
+        <Condition ID="`EnemyDetected">
+            <input_port name="armor_id" default="1;2;3;4;5;7" 
+            type="std::vector&lt;int, std::allocator&lt;int&gt; &gt;">detecter信息</input_port>
+            <input_port name="max_distance" default="8.000000" type="float">Distance to enemy target</input_port>
+            <input_port name="key_port" default="{@detector_armors}" 
+            type="auto_aim_interfaces::msg::Armors_&lt;std::allocator&lt;void&gt; &gt;">Vision detector port on blackboard</input_port>
+        </Condition>
+
+        <Condition ID="AttackPose">
+        <input_port name="costmap_port"
+                    default="{@nav_globalCostmap}"
+                    type="nav_msgs::msg::OccupancyGrid_&lt;std::allocator&lt;void&gt; &gt;">GlobalCostmap port on blackboard</input_port>
+        <input_port name="tracker_port"
+                    default="{@tracker_target}"
+                    type="auto_aim_interfaces::msg::Target_&lt;std::allocator&lt;void&gt; &gt;">Vision target port on blackboard</input_port>
+        <output_port name="goal"
+                    default="{attack_pose}"
+                    type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Expected goal pose that send to nav2. Fill with format `x;y;yaw`</output_port>
+        <input_port name="topic_name"
+                    default="__default__placeholder__"
+                    type="std::string">Topic name</input_port>
+        </Condition>
+        
+        <!-- 友方机器人追踪节点 -->
+        <Condition ID="AllyBot">
+        <input_port name="costmap_port"
+                    default="{@nav_globalCostmap}"
+                    type="nav_msgs::msg::OccupancyGrid_&lt;std::allocator&lt;void&gt; &gt;">GlobalCostmap port on blackboard</input_port>
+        <input_port name="allybot_port"
+                    default="{@referee_allyBot}"
+                    type="referee_interfaces::msg::AllyBot_&lt;std::allocator&lt;void&gt; &gt;">友方机器人</input_port>
+        <input_port name="select"
+                    default="1"
+                    type="int">Robot select: 1=hero, 2=engineer, 3=standard_3, 4=standard_4</input_port>
+        <input_port name="trans_x" 
+                    default="{trans_x}" 
+                    type="double">裁判系统到比赛地图的转换 x</input_port>
+        <input_port name="trans_y" 
+                    default="{trans_y}" 
+                    type="double">裁判系统到比赛地图的转换 y</input_port>
+        <input_port name="trans_w" 
+                    default="{trans_w}" 
+                    type="double">裁判系统到比赛地图的转换 w</input_port>
+        <output_port name="goal"
+                    default="{ally_approach_pose}"
+                    type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;">友方机器人的目标位置</output_port>
+        <input_port name="topic_name"
+                    default="debug_ally_pose"
+                    type="std::string">Topic name for visualization</input_port>
+        </Condition>
+        <!-- forked from junlin -->
+        <Action ID="SendGoal"   editable="true">
+            <input_port name="goal_pose"    default="0;0;0; 0;0;0;1"/>
+            <input_port name="action_name"  default="navigate_to_pose"/>
+        </Action>
+    </TreeNodesModel>
+
+</root>

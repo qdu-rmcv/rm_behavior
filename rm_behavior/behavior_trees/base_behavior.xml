@@ -1,0 +1,26 @@
+
+<BehaviorTree ID="rm_">
+    <Sequence>
+    <TimeCheck time_limit="4"/>
+        <WhileDoElse>
+            <StatusCheck sentry_hp_limit="200"
+                         projectile_allowance_limit="20"/>
+            <WhileDoElse>
+                <EnemyDetected armor_id="1;2;3;4;5;7"
+                               max_distance="8.0"
+                               key_port="{@detector_armors}"/>
+            <WhileDoElse>
+                <Sequence>
+                    <AttackPose costmap_port="{@nav_globalCostmap}"
+                                tracker_port="{@tracker_target}"
+                                goal="{attack_pose}"
+                                topic_name="debug_attack_pose"/>
+                    <TopicNav2Goal goal="{attack_pose}" topic_name="/goal_pose"/>
+                </Sequence>
+            </WhileDoElse>
+                <TopicNav2Goal goal="0.259;-4.56;0.00563" topic_name="/goal_pose"/>
+            </WhileDoElse>
+            <TopicNav2Goal goal="-1.52;1.18;0.00299" topic_name="/goal_pose"/>
+        </WhileDoElse>
+    </Sequence>
+</BehaviorTree>

@@ -1,0 +1,53 @@
+<!-- 英雄跟随版本 -->
+    <BehaviorTree ID="hero_follow">
+        <WhileDoElse>
+            <GameStatusCheck game_status="{@referee_gameStatus}" 
+            time_limit="4"/>
+            <WhileDoElse>
+                <StatusCheck sentry_hp_limit="200"
+                             projectile_allowance_limit="20"/>
+                <WhileDoElse>
+                    <HomeCheck basic_hp="{@basic_hp}"
+                               outpost_hp_limit="0"
+                               base_hp_limit="100"/>
+                    <Sequence>
+                        <WhileDoElse>
+                            <EnemyDetected armor_id="1;2;3;4;5;7"
+                                        max_distance="8.0"
+                                        key_port="{@detector_armors}"/>
+                            <Sequence>
+                                <AttackPose costmap_port="{@nav_globalCostmap}"
+                                            tracker_port="{@tracker_target}"
+                                            goal="{attack_pose}"
+                                            topic_name="debug_attack_pose"/>
+                                <Nav2Goal goal="{attack_pose}" topic_name="navigate_to_pose"/>
+                            </Sequence>
+                            <Sequence>
+                                <AllyBot costmap_port="{@nav_globalCostmap}"
+                                        allybot_port="{@referee_allyBot}"
+                                        select="1"
+                                        trans_x="{trans_x}"
+                                        trans_y="{trans_y}"
+                                        trans_w="{trans_w}"
+                                        goal="{ally_approach_pose}"
+                                        topic_name="debug_ally_pose"/>
+                                <TopicNav2Goal goal="{ally_approach_pose}" topic_name="/goal_pose"/>
+                            </Sequence>
+                        </WhileDoElse>
+                    </Sequence>
+                    <Sequence>
+                        <TopicNav2Goal goal="1.04;-0.599;0.0302" topic_name="/goal_pose"/>
+                        <Sleep msec="4000"/>
+                        <TopicNav2Goal goal="0.502;-2.74;0.0181" topic_name="/goal_pose"/>
+                        <Sleep msec="4000"/>
+                    </Sequence>
+                    <!-- 若前哨站被击毁，回到己方某点 -->
+                </WhileDoElse>
+                <Sequence>
+                    <TopicNav2Goal goal="0.259;-4.56;0.00563" topic_name="/goal_pose"/>
+                </Sequence>
+            </WhileDoElse>
+            <TopicNav2Goal goal="-1.52;1.18;0.00299" topic_name="/goal_pose"/>
+            <Sleep msec="2000"/>
+        </WhileDoElse>
+    </BehaviorTree>
