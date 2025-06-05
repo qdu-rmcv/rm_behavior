@@ -18,12 +18,12 @@
 
 namespace rm_behavior {
 
-// Nav2GoalAction::Nav2GoalAction(const std::string &name,
-//                              const BT::NodeConfig &conf,
-//                              const BT::RosNodeParams &params)
-// : RosActionNode<nav2_msgs::action::NavigateToPose>(name, conf, params)
-// {
-// }
+Nav2GoalAction::Nav2GoalAction(const std::string &name,
+                             const BT::NodeConfig &conf,
+                             const BT::RosNodeParams &params)
+: RosActionNode<nav2_msgs::action::NavigateToPose>(name, conf, params)
+{
+}
 
 bool Nav2GoalAction::setGoal(nav2_msgs::action::NavigateToPose::Goal & goal)
 {
@@ -64,11 +64,11 @@ BT::NodeStatus Nav2GoalAction::onFeedback(
   return BT::NodeStatus::RUNNING;
 }
 
-void Nav2GoalAction::onHalt() { RCLCPP_INFO(logger(), "Nav2GoalAction 已被暂停."); }
+void Nav2GoalAction::onHalt() { RCLCPP_INFO(logger(), "导航动作已被暂停"); }
 
 BT::NodeStatus Nav2GoalAction::onFailure(BT::ActionNodeErrorCode error)
 {
-  RCLCPP_ERROR(logger(), "Nav2GoalAction 失败，错误代码: %d", error);
+  RCLCPP_ERROR(logger(), "导航动作错误: %d", error);
   return BT::NodeStatus::FAILURE;
 }
 

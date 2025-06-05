@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//TODO 待测试
+
 #include "rm_behavior/plugins/action/allybot.hpp"
 
 #include "nav2_util/node_utils.hpp"
@@ -81,15 +83,15 @@ bool AllyBotAction::setMessage(visualization_msgs::msg::MarkerArray & msg)
   auto select = getInput<int>("select");
 
   if (!global_costmap) {
-    RCLCPP_ERROR(node_->get_logger(), "Missing required input: costmap_port");
+    RCLCPP_ERROR(node_->get_logger(), "缺少必要输入：costmap_port");
     return false;
   }
   if (!ally_bot) {
-    RCLCPP_ERROR(node_->get_logger(), "Missing required input: allybot_port");
+    RCLCPP_ERROR(node_->get_logger(), "缺少必要输入：allybot_port");
     return false;
   }
   if (!select) {
-    RCLCPP_WARN(node_->get_logger(), "No select value provided, using default (1=hero)");
+    RCLCPP_WARN(node_->get_logger(), "未提供 select 值，使用默认值 (1=hero)");
     select = 1;
   }
 
@@ -100,7 +102,7 @@ bool AllyBotAction::setMessage(visualization_msgs::msg::MarkerArray & msg)
   
   // 检查位置是否有效
   if (ally_position.x == 0 && ally_position.y == 0 && ally_position.z == 0) {
-    RCLCPP_WARN(node_->get_logger(), "Selected robot %s position is invalid", robot_name.c_str());
+    RCLCPP_WARN(node_->get_logger(), "选中的机器人 %s 位置无效", robot_name.c_str());
     return false;
   }
 
@@ -120,7 +122,7 @@ bool AllyBotAction::setMessage(visualization_msgs::msg::MarkerArray & msg)
   feasible_points = filterFeasiblePoints(candidates, global_costmap.value());
   if (feasible_points.empty()) {
     RCLCPP_WARN(
-      node_->get_logger(), "No feasible approach points found for %s", robot_name.c_str());
+      node_->get_logger(), "未找到机器人 %s 的可行接近点", robot_name.c_str());
     return false;
   }
 
@@ -128,7 +130,7 @@ bool AllyBotAction::setMessage(visualization_msgs::msg::MarkerArray & msg)
   if (!nav2_util::getCurrentPose(
         robot_pose, *tf_buffer_, global_costmap->header.frame_id, params_.robot_base_frame,
         params_.transform_tolerance)) {
-    RCLCPP_ERROR(node_->get_logger(), "Failed to get robot pose");
+    RCLCPP_ERROR(node_->get_logger(), "获取机器人位姿失败");
     return false;
   }
 
@@ -169,7 +171,7 @@ Point AllyBotAction::getSelectedRobotPosition(
       break;
     default:
       RCLCPP_ERROR(
-        node_->get_logger(), "Invalid robot select value: %d (valid: 1-4)", select);
+        node_->get_logger(), "无效的机器人选择值: %d (有效值: 1-4)", select);
       raw_position.x = raw_position.y = raw_position.z = 0.0;
       return raw_position;
   }
@@ -199,7 +201,7 @@ std::vector<Point> AllyBotAction::generateCandidatePoints(const Point & ally_pos
   std::vector<Point> candidates;
   candidates.reserve(params_.num_sectors);
 
-  for (int i =.0; i < params_.num_sectors; ++i) {
+  for (int i = 0; i < params_.num_sectors; ++i) {
     const double angle = i * 2 * M_PI / params_.num_sectors;
     Point p;
     p.x = ally_position.x + params_.approach_radius * cos(angle);
@@ -276,16 +278,16 @@ bool AllyBotAction::transformPoseInTargetFrame(
       tf_buffer.transform(input_pose, target_frame, tf2::durationFromSec(transform_timeout));
     return true;
   } catch (tf2::LookupException & ex) {
-    RCLCPP_ERROR(logger, "No Transform available Error looking up target frame: %s\n", ex.what());
+    RCLCPP_ERROR(logger, "查找目标坐标系时无可用变换: %s", ex.what());
   } catch (tf2::ConnectivityException & ex) {
-    RCLCPP_ERROR(logger, "Connectivity Error looking up target frame: %s\n", ex.what());
+    RCLCPP_ERROR(logger, "查找目标坐标系时连接错误: %s", ex.what());
   } catch (tf2::ExtrapolationException & ex) {
-    RCLCPP_ERROR(logger, "Extrapolation Error looking up target frame: %s\n", ex.what());
+    RCLCPP_ERROR(logger, "查找目标坐标系时外推错误: %s", ex.what());
   } catch (tf2::TimeoutException & ex) {
-    RCLCPP_ERROR(logger, "Transform timeout with tolerance: %.4f", transform_timeout);
+    RCLCPP_ERROR(logger, "变换超时，容差: %.4f", transform_timeout);
   } catch (tf2::TransformException & ex) {
     RCLCPP_ERROR(
-      logger, "Failed to transform from %s to %s", input_pose.header.frame_id.c_str(),
+      logger, "从 %s 到 %s 的变换失败", input_pose.header.frame_id.c_str(),
       target_frame.c_str());
   }
 
@@ -400,7 +402,7 @@ Point AllyBotAction::transformCoordinates(const Point &input_point)
   auto trans_w_opt = getInput<double>("trans_w");
 
   if (!trans_x_opt || !trans_y_opt || !trans_w_opt) {
-    RCLCPP_ERROR(node_->get_logger(), "Failed to get transformation parameters from input ports");
+    RCLCPP_ERROR(node_->get_logger(), "无法从输入端口获取坐标变换参数");
     return input_point;
   }
 

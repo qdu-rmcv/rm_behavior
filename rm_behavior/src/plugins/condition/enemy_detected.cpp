@@ -27,11 +27,11 @@ namespace rm_behavior
     {
         return {
         BT::InputPort<auto_aim_interfaces::msg::Armors>(
-        "key_port", "{@detector_armors}", "Vision detector port on blackboard"),  // 视觉检测器在黑板上的端口
+        "key_port", "{@detector_armors}", "Vision detector port on blackboard"),
         BT::InputPort<std::vector<int>>(
         "armor_id", "1;2;3;4;6",
-        "Expected id of armors. "),  // 期望的装甲板ID，默认为1、2、3、4、6
-        BT::InputPort<float>("max_distance", 8.0, "Distance to enemy target"),  // 敌人目标的最大检测距离，默认为8米
+        "Expected id of armors. "),  // 追击装甲板ID，默认为1、2、3、4、6
+        BT::InputPort<float>("max_distance", 8.0, "Distance to enemy target"),  // 敌人目标的最大检测距离，默认为8
         };
 
         };
@@ -68,9 +68,8 @@ namespace rm_behavior
     }
         return BT::NodeStatus::FAILURE;  // 没有满足条件的敌人，返回失败
     }
+}
 
-    
-    }
 #include "behaviortree_cpp/bt_factory.h"
 BT_REGISTER_NODES(factory)
 {

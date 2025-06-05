@@ -44,12 +44,12 @@ BT::NodeStatus StatusCheckCondition::tick()
     return BT::NodeStatus::FAILURE;
   }
   
-  RCLCPP_INFO(logger_, "[StatusCheck] 状态检查: 哨兵血量=%d, 弹药量=%d", 
+  RCLCPP_INFO(logger_, "[StatusCheck] 状态: 哨兵血量=%d, 弹药量=%d", 
               basic_hp.sentry_hp, basic_hp.projectile_allowance_17mm);
 
   if (basic_hp.sentry_hp <= sentry_hp_limit || 
       basic_hp.projectile_allowance_17mm <= projectile_allowance_limit) {
-    RCLCPP_WARN(logger_,"[StatusCheck] 状态差:血量=%d, 弹药=%d -> 返回FAILURE",
+    RCLCPP_WARN(logger_,"[StatusCheck] 状态不佳:血量=%d, 弹药=%d -> 返回FAILURE",
     basic_hp.sentry_hp, basic_hp.projectile_allowance_17mm);
     return BT::NodeStatus::FAILURE;
   }
@@ -63,7 +63,7 @@ BT::PortsList StatusCheckCondition::providedPorts()
 {
   return {
     BT::InputPort<referee_interfaces::msg::BasicHp>("basic_hp", "{@basic_hp}", 
-                      "哨兵基本状态信息"),
+                      "哨兵基本状态"),
     BT::InputPort<int>("sentry_hp_limit","{@sentry_hp_limit}","哨兵血量阈值"),
     BT::InputPort<int>("projectile_allowance_limit","{@projectile_allowance_limit}",
                       "允许发弹量阈值")

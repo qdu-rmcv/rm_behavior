@@ -47,7 +47,7 @@ BT::NodeStatus HomeCheckCondition::tick() {
                  msg->base_hp, msg->outpost_hp);
     return BT::NodeStatus::SUCCESS;
   } else {
-    RCLCPP_DEBUG(logger_, "[HomeCheck] 状态不及预期: 基地血量=%d, 前哨站血量=%d -> FAILURE",
+    RCLCPP_DEBUG(logger_, "[HomeCheck] 状态不佳: 基地血量=%d, 前哨站血量=%d -> FAILURE",
                  msg->base_hp, msg->outpost_hp);
     return BT::NodeStatus::FAILURE;
   }
