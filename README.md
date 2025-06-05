@@ -8,8 +8,6 @@
 
 相比于 24 赛季所使用的电控端拨点控制方式，当前版本采用行为树架构，使决策逻辑更加灵活、可维护性强，并具备良好的可读性和扩展性。
 
----
-
 ## 设计背景与演进
 
 在 24 赛季传承过程中，老学长曾提到当时的决策逻辑完全依赖电控端进行拨点控制，这种方式存在以下问题：
@@ -19,8 +17,6 @@
 - **扩展性差**：新增行为或状态需要大量改动。
 
 为了突破这些限制，我们在参考多家开源和团队经验的基础上，引入了 **BehaviorTree.CPP** 框架，并结合 ROS 2 的通信机制构建了当前的决策系统，形成了现在的 `rm_behavior` 功能包。
-
----
 
 ## 核心架构
 
@@ -37,7 +33,7 @@
 
 ### rm_behavior 功能包组成
 
-```
+``` text
 rm_behavior/
 ├── include/
 │   └── behavior_nodes/     # 行为树节点头文件
@@ -48,8 +44,6 @@ rm_behavior/
 ├── launch/                 # 启动文件
 └── CMakeLists.txt          # 编译配置
 ```
-
----
 
 ## 使用方法
 
@@ -264,13 +258,9 @@ list(APPEND plugin_libs example_action)
 </root>
 ```
 
----
-
 ## 注意事项
 
 由于云台扫描模式相关代码较为混乱且尚未整理，暂时决定不将其纳入当前版本。若假期完成重构，会将新版功能提交至仓库。
-
----
 
 ## 鸣谢
 
@@ -280,6 +270,5 @@ list(APPEND plugin_libs example_action)
 - [北理莫斯科大学行为树实现方案](https://github.com/SMBU-PolarBear-Robotics-Team/pb2025_sentry_behavior)
 - [国防科大君临行为决策模块方案](https://gitee.com/nepenthe886/JunLin_navigation2025)
 
----
 
 QQ: 1822261285, Jquark
